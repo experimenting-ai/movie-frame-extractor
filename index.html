@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Frame Extractor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; color: #e4e4e4; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 30px; font-weight: 300; font-size: 2.5rem; color: #fff; }
+        h1 span { background: linear-gradient(90deg, #e94560, #ff6b6b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .drop-zone { border: 3px dashed #4a5568; border-radius: 16px; padding: 60px 20px; text-align: center; transition: all 0.3s ease; cursor: pointer; background: rgba(255,255,255,0.02); margin-bottom: 30px; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #e94560; background: rgba(233, 69, 96, 0.1); }
+        .drop-zone-icon { font-size: 48px; margin-bottom: 15px; }
+        .drop-zone p { font-size: 1.1rem; color: #a0aec0; }
+        .drop-zone small { display: block; margin-top: 10px; color: #718096; }
+        #fileInput { display: none; }
+        .video-section { display: none; background: rgba(0,0,0,0.3); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
+        .video-section.active { display: block; }
+        .video-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; background: #000; }
+        #videoPlayer { width: 100%; display: block; }
+        .controls { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; }
+        .scrubber-container { margin-bottom: 20px; }
+        .scrubber-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #a0aec0; }
+        #frameScrubber { width: 100%; height: 8px; -webkit-appearance: none; appearance: none; background: #2d3748; border-radius: 4px; outline: none; cursor: pointer; }
+        #frameScrubber::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #e94560; cursor: pointer; box-shadow: 0 2px 10px rgba(233, 69, 96, 0.5); }
+        .info-row { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap; }
+        .info-item { background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 8px; text-align: center; }
+        .info-item label { display: block; font-size: 0.75rem; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .info-item span { font-size: 1.2rem; font-weight: 600; color: #fff; }
+        .button-row { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        button { padding: 12px 28px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+        .btn-secondary { background: #2d3748; color: #e4e4e4; }
+        .btn-secondary:hover { background: #4a5568; }
+        .btn-primary { background: linear-gradient(135deg, #e94560, #ff6b6b); color: #fff; box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5); }
+        .preview-section { display: none; background: rgba(0,0,0,0.3); border-radius: 16px; padding: 25px; text-align: center; }
+        .preview-section.active { display: block; }
+        .preview-section h3 { margin-bottom: 20px; font-weight: 400; color: #a0aec0; }
+        #previewCanvas { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin-bottom: 20px; }
+        .hidden-canvas { display: none; }
+        .filename-input { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filename-input label { color: #a0aec0; }
+        .filename-input input { padding: 10px 15px; border: 2px solid #4a5568; border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; width: 250px; }
+        .filename-input input:focus { outline: none; border-color: #e94560; }
+        .filename-input span { color: #718096; }
+        .frame-input-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .frame-input-row label { color: #a0aec0; font-size: 0.9rem; }
+        .frame-input-row input { width: 100px; padding: 8px 12px; border: 2px solid #4a5568; border-radius: 6px; background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; text-align: center; }
+        .frame-input-row input:focus { outline: none; border-color: #e94560; }
+        .frame-input-row button { padding: 8px 16px; font-size: 0.9rem; }
+        @media (max-width: 600px) { h1 { font-size: 1.8rem; } .drop-zone { padding: 40px 15px; } .info-row { gap: 15px; } .info-item { padding: 10px 15px; } button { padding: 10px 20px; font-size: 0.9rem; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Movie <span>Frame Extractor</span></h1>
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-icon">📁</div>
+            <p>Drag & drop your video file here</p>
+            <small>or click to browse • Supports .mov and .mp4</small>
+            <input type="file" id="fileInput" accept=".mov,.mp4,video/quicktime,video/mp4">
+        </div>
+        <div class="video-section" id="videoSection">
+            <div class="video-container"><video id="videoPlayer" preload="metadata"></video></div>
+            <div class="controls">
+                <div class="scrubber-container">
+                    <div class="scrubber-label"><span>Frame: <strong id="currentFrameLabel">0</strong></span><span>Time: <strong id="currentTimeLabel">0:00.000</strong></span></div>
+                    <input type="range" id="frameScrubber" min="0" max="100" value="0" step="1">
+                </div>
+                <div class="info-row">
+                    <div class="info-item"><label>Duration</label><span id="durationInfo">--</span></div>
+                    <div class="info-item"><label>Resolution</label><span id="resolutionInfo">--</span></div>
+                    <div class="info-item"><label>Est. Frames</label><span id="framesInfo">--</span></div>
+                </div>
+                <div class="button-row">
+                    <button class="btn-secondary" id="firstFrameBtn">⏮ First Frame</button>
+                    <button class="btn-secondary" id="prevFrameBtn">◀ Prev</button>
+                    <button class="btn-secondary" id="nextFrameBtn">Next ▶</button>
+                    <button class="btn-secondary" id="lastFrameBtn">Last Frame ⏭</button>
+                </div>
+                <div class="frame-input-row">
+                    <label>Go to frame:</label>
+                    <input type="number" id="frameNumberInput" min="0" placeholder="0">
+                    <button class="btn-secondary" id="goToFrameBtn">Go</button>
+                </div>
+            </div>
+        </div>
+        <div class="preview-section" id="previewSection">
+            <h3>Frame Preview</h3>
+            <canvas id="previewCanvas"></canvas>
+            <canvas id="exportCanvas" class="hidden-canvas"></canvas>
+            <div class="filename-input"><label>Filename:</label><input type="text" id="filenameInput" value="frame"><span>.png</span></div>
+            <div class="button-row">
+                <button class="btn-primary" id="extractBtn">💾 Extract as PNG</button>
+                <button class="btn-secondary" id="newVideoBtn">📁 Load New Video</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const dropZone=document.getElementById('dropZone'),fileInput=document.getElementById('fileInput'),videoSection=document.getElementById('videoSection'),previewSection=document.getElementById('previewSection'),videoPlayer=document.getElementById('videoPlayer'),frameScrubber=document.getElementById('frameScrubber'),previewCanvas=document.getElementById('previewCanvas'),exportCanvas=document.getElementById('exportCanvas'),filenameInput=document.getElementById('filenameInput'),frameNumberInput=document.getElementById('frameNumberInput'),currentFrameLabel=document.getElementById('currentFrameLabel'),currentTimeLabel=document.getElementById('currentTimeLabel'),durationInfo=document.getElementById('durationInfo'),resolutionInfo=document.getElementById('resolutionInfo'),framesInfo=document.getElementById('framesInfo');let estimatedFPS=30,totalFrames=0,currentFrame=0,videoLoaded=!1;dropZone.addEventListener('click',()=>fileInput.click()),dropZone.addEventListener('dragover',e=>{e.preventDefault(),dropZone.classList.add('dragover')}),dropZone.addEventListener('dragleave',()=>{dropZone.classList.remove('dragover')}),dropZone.addEventListener('drop',e=>{e.preventDefault(),dropZone.classList.remove('dragover');const t=e.dataTransfer.files[0];t&&(t.type.includes('video')||t.name.match(/\.(mov|mp4)$/i))&&loadVideo(t)}),fileInput.addEventListener('change',e=>{e.target.files[0]&&loadVideo(e.target.files[0])});function loadVideo(e){const t=URL.createObjectURL(e),n=e.name.replace(/\.[^/.]+$/,'');filenameInput.value=n+'_frame',videoPlayer.src=t,videoPlayer.addEventListener('loadedmetadata',()=>{videoLoaded=!0;const e=videoPlayer.duration;estimatedFPS=30,totalFrames=Math.floor(e*estimatedFPS),durationInfo.textContent=formatTime(e),resolutionInfo.textContent=videoPlayer.videoWidth+' × '+videoPlayer.videoHeight,framesInfo.textContent='~'+totalFrames,frameScrubber.max=totalFrames-1,frameScrubber.value=0,frameNumberInput.max=totalFrames-1,dropZone.style.display='none',videoSection.classList.add('active'),previewSection.classList.add('active'),goToFrame(0)},{once:!0})}function goToFrame(e){e=Math.max(0,Math.min(e,totalFrames-1)),currentFrame=e;const t=e/estimatedFPS;videoPlayer.currentTime=t,frameScrubber.value=e,frameNumberInput.value=e,updateLabels()}function updateLabels(){currentFrameLabel.textContent=currentFrame,currentTimeLabel.textContent=formatTimePrecise(videoPlayer.currentTime)}function formatTime(e){const t=Math.floor(e/60),n=Math.floor(e%60);return t+':'+n.toString().padStart(2,'0')}function formatTimePrecise(e){const t=Math.floor(e/60),n=(e%60).toFixed(3);return t+':'+n.padStart(6,'0')}function captureFrame(){const e=previewCanvas.getContext('2d'),t=exportCanvas.getContext('2d'),n=videoPlayer.videoWidth,a=videoPlayer.videoHeight,o=Math.min(1,800/n);previewCanvas.width=n*o,previewCanvas.height=a*o,exportCanvas.width=n,exportCanvas.height=a,e.drawImage(videoPlayer,0,0,previewCanvas.width,previewCanvas.height),t.drawImage(videoPlayer,0,0,n,a)}videoPlayer.addEventListener('seeked',()=>{videoLoaded&&captureFrame()}),frameScrubber.addEventListener('input',e=>{goToFrame(parseInt(e.target.value))}),document.getElementById('firstFrameBtn').addEventListener('click',()=>goToFrame(0)),document.getElementById('lastFrameBtn').addEventListener('click',()=>goToFrame(totalFrames-1)),document.getElementById('prevFrameBtn').addEventListener('click',()=>goToFrame(currentFrame-1)),document.getElementById('nextFrameBtn').addEventListener('click',()=>goToFrame(currentFrame+1)),document.getElementById('goToFrameBtn').addEventListener('click',()=>{const e=parseInt(frameNumberInput.value);isNaN(e)||goToFrame(e)}),frameNumberInput.addEventListener('keypress',e=>{if('Enter'===e.key){const e=parseInt(frameNumberInput.value);isNaN(e)||goToFrame(e)}}),document.getElementById('extractBtn').addEventListener('click',()=>{const e=filenameInput.value||'frame',t=document.createElement('a');t.download=e+'_'+currentFrame+'.png',t.href=exportCanvas.toDataURL('image/png'),t.click()}),document.getElementById('newVideoBtn').addEventListener('click',()=>{videoLoaded=!1,videoPlayer.src='',videoSection.classList.remove('active'),previewSection.classList.remove('active'),dropZone.style.display='block',fileInput.value=''}),document.addEventListener('keydown',e=>{if(videoLoaded&&'INPUT'!==document.activeElement.tagName)switch(e.key){case'ArrowLeft':goToFrame(currentFrame-1);break;case'ArrowRight':goToFrame(currentFrame+1);break;case'Home':goToFrame(0);break;case'End':goToFrame(totalFrames-1);break;case's':case'S':document.getElementById('extractBtn').click()}});
+    </script>
+</body>
+</html>
