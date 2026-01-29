@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Frame Extractor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 50%, #e8e8e8 100%); min-height: 100vh; color: #333; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 30px; font-weight: 300; font-size: 2.5rem; color: #333; }
+        h1 span { background: linear-gradient(90deg, #555, #777); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        /* Mode Tabs */
+        .mode-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+        .mode-tab { padding: 12px 30px; border: 2px solid #ccc; border-radius: 8px; background: transparent; color: #666; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
+        .mode-tab:hover { border-color: #999; color: #333; }
+        .mode-tab.active { background: linear-gradient(135deg, #888, #aaa); border-color: transparent; color: #fff; }
+
+        .drop-zone { border: 3px dashed #ccc; border-radius: 16px; padding: 60px 20px; text-align: center; transition: all 0.3s ease; cursor: pointer; background: rgba(255,255,255,0.6); margin-bottom: 30px; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #999; background: rgba(255,255,255,0.9); }
+        .drop-zone-icon { font-size: 48px; margin-bottom: 15px; color: #999; }
+        .drop-zone p { font-size: 1.1rem; color: #666; }
+        .drop-zone small { display: block; margin-top: 10px; color: #888; }
+        #fileInput, #bulkFileInput { display: none; }
+
+        .video-section { display: none; background: rgba(255,255,255,0.7); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .video-section.active { display: block; }
+        .video-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; background: #ddd; }
+        #videoPlayer { width: 100%; display: block; }
+        .controls { background: rgba(255,255,255,0.8); padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; }
+        .scrubber-container { margin-bottom: 20px; }
+        .scrubber-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #666; }
+        #frameScrubber { width: 100%; height: 8px; -webkit-appearance: none; appearance: none; background: #ddd; border-radius: 4px; outline: none; cursor: pointer; }
+        #frameScrubber::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #888; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
+        #frameScrubber::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #888; cursor: pointer; border: none; }
+        .info-row { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap; }
+        .info-item { background: rgba(0,0,0,0.03); padding: 12px 20px; border-radius: 8px; text-align: center; border: 1px solid #e8e8e8; }
+        .info-item label { display: block; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .info-item span { font-size: 1.2rem; font-weight: 600; color: #333; }
+        .button-row { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+        button { padding: 12px 28px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary { background: #e0e0e0; color: #555; }
+        .btn-secondary:hover:not(:disabled) { background: #d0d0d0; }
+        .btn-primary { background: linear-gradient(135deg, #777, #999); color: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); }
+        .btn-accent { background: linear-gradient(135deg, #888, #aaa); color: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12); }
+        .btn-accent:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18); }
+        .btn-batch { background: linear-gradient(135deg, #999, #bbb); color: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .btn-batch:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
+        .preview-section { display: none; background: rgba(255,255,255,0.7); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .preview-section.active { display: block; }
+        .preview-section h3 { margin-bottom: 20px; font-weight: 400; color: #666; }
+        #previewCanvas { max-width: 100%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .hidden-canvas { display: none; }
+        .filename-input { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filename-input label { color: #666; }
+        .filename-input input[type="text"] { padding: 10px 15px; border: 2px solid #ddd; border-radius: 8px; background: #fff; color: #333; font-size: 1rem; width: 250px; }
+        .filename-input input:focus { outline: none; border-color: #999; }
+        .filename-input span { color: #888; }
+        .frame-input-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .frame-input-row label { color: #666; font-size: 0.9rem; }
+        .frame-input-row input { width: 100px; padding: 8px 12px; border: 2px solid #ddd; border-radius: 6px; background: #fff; color: #333; font-size: 1rem; text-align: center; }
+        .frame-input-row input:focus { outline: none; border-color: #999; }
+        .frame-input-row button { padding: 8px 16px; font-size: 0.9rem; }
+
+        /* Batch Mode Styles */
+        .batch-section { background: rgba(255,255,255,0.5); border-radius: 12px; padding: 20px; margin-top: 20px; display: none; border: 1px solid #e8e8e8; }
+        .batch-section.active { display: block; }
+        .batch-section h4 { color: #666; margin-bottom: 15px; font-weight: 400; }
+        .batch-row { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+        .batch-row label { color: #666; font-size: 0.9rem; }
+        .batch-row input { width: 80px; padding: 8px 12px; border: 2px solid #ddd; border-radius: 6px; background: #fff; color: #333; font-size: 1rem; text-align: center; }
+        .batch-row input:focus { outline: none; border-color: #999; }
+        .batch-row select { padding: 8px 12px; border: 2px solid #ddd; border-radius: 6px; background: #fff; color: #333; font-size: 1rem; }
+        .toggle-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .toggle { position: relative; width: 50px; height: 26px; background: #ddd; border-radius: 13px; cursor: pointer; transition: background 0.3s; }
+        .toggle.active { background: #999; }
+        .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .toggle.active::after { transform: translateX(24px); }
+        .progress-container { display: none; margin-top: 15px; }
+        .progress-container.active { display: block; }
+        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #999, #bbb); width: 0%; transition: width 0.3s; }
+        .progress-text { color: #666; font-size: 0.85rem; margin-top: 8px; }
+
+        /* Bulk Mode Styles */
+        .bulk-section { display: none; }
+        .bulk-section.active { display: block; }
+        .file-list { background: rgba(255,255,255,0.7); border-radius: 12px; padding: 20px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #e8e8e8; }
+        .file-list h4 { color: #666; margin-bottom: 15px; font-weight: 400; }
+        .file-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: rgba(0,0,0,0.02); border-radius: 8px; margin-bottom: 10px; border: 1px solid #eee; }
+        .file-item:last-child { margin-bottom: 0; }
+        .file-item-name { color: #333; font-size: 0.95rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 15px; }
+        .file-item-status { font-size: 0.85rem; color: #888; }
+        .file-item-status.done { color: #6a6; }
+        .file-item-status.processing { color: #666; }
+        .file-item-status.error { color: #a66; }
+        .file-item-remove { background: none; border: none; color: #a66; cursor: pointer; padding: 5px; font-size: 1.2rem; }
+        .bulk-options { background: rgba(255,255,255,0.7); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #e8e8e8; }
+        .bulk-options h4 { color: #666; margin-bottom: 15px; font-weight: 400; text-align: center; }
+        .option-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .option-item { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 20px; background: rgba(0,0,0,0.02); border-radius: 8px; border: 2px solid transparent; transition: all 0.3s; }
+        .option-item:hover { border-color: #ccc; }
+        .option-item.selected { border-color: #999; background: rgba(0,0,0,0.05); }
+        .option-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #888; }
+        .option-item label { color: #444; cursor: pointer; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .drop-zone { padding: 40px 15px; }
+            .info-row { gap: 15px; }
+            .info-item { padding: 10px 15px; }
+            button { padding: 10px 20px; font-size: 0.9rem; }
+            .mode-tab { padding: 10px 20px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie <span>Frame Extractor</span></h1>
+
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="singleModeTab">Single Video</button>
+            <button class="mode-tab" id="bulkModeTab">Bulk Process</button>
+        </div>
+
+        <!-- SINGLE VIDEO MODE -->
+        <div id="singleMode">
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-icon">[ + ]</div>
+                <p>Drag & drop your video file here</p>
+                <small>or click to browse - Supports .mov and .mp4</small>
+                <input type="file" id="fileInput" accept=".mov,.mp4,video/quicktime,video/mp4">
+            </div>
+
+            <div class="video-section" id="videoSection">
+                <div class="video-container">
+                    <video id="videoPlayer" preload="metadata"></video>
+                </div>
+                <div class="controls">
+                    <div class="scrubber-container">
+                        <div class="scrubber-label">
+                            <span>Frame: <strong id="currentFrameLabel">0</strong></span>
+                            <span>Time: <strong id="currentTimeLabel">0:00.000</strong></span>
+                        </div>
+                        <input type="range" id="frameScrubber" min="0" max="100" value="0" step="1">
+                    </div>
+                    <div class="info-row">
+                        <div class="info-item"><label>Duration</label><span id="durationInfo">--</span></div>
+                        <div class="info-item"><label>Resolution</label><span id="resolutionInfo">--</span></div>
+                        <div class="info-item"><label>Est. Frames</label><span id="framesInfo">--</span></div>
+                    </div>
+                    <div class="button-row">
+                        <button class="btn-secondary" id="firstFrameBtn">|&lt;&lt; First</button>
+                        <button class="btn-secondary" id="prevFrameBtn">&lt; Prev</button>
+                        <button class="btn-secondary" id="nextFrameBtn">Next &gt;</button>
+                        <button class="btn-secondary" id="lastFrameBtn">Last &gt;&gt;|</button>
+                    </div>
+                    <div class="frame-input-row">
+                        <label>Go to frame:</label>
+                        <input type="number" id="frameNumberInput" min="0" placeholder="0">
+                        <button class="btn-secondary" id="goToFrameBtn">Go</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section" id="previewSection">
+                <h3>Frame Preview</h3>
+                <canvas id="previewCanvas"></canvas>
+                <canvas id="exportCanvas" class="hidden-canvas"></canvas>
+                <div class="filename-input">
+                    <label>Filename:</label>
+                    <input type="text" id="filenameInput" value="frame">
+                    <span>.png</span>
+                </div>
+                <div class="button-row">
+                    <button class="btn-primary" id="extractBtn">Save Current Frame</button>
+                    <button class="btn-accent" id="extractFirstLastBtn">|&lt;&lt; First & Last &gt;&gt;|</button>
+                </div>
+                <div class="toggle-container">
+                    <span style="color: #666;">Batch Mode</span>
+                    <div class="toggle" id="batchToggle"></div>
+                </div>
+                <div class="batch-section" id="batchSection">
+                    <h4>Batch Export</h4>
+                    <div class="batch-row">
+                        <label>Extract every</label>
+                        <input type="number" id="batchInterval" value="30" min="1">
+                        <select id="batchUnit">
+                            <option value="frames">frames</option>
+                            <option value="seconds">seconds</option>
+                        </select>
+                    </div>
+                    <div class="batch-row">
+                        <label>From frame</label>
+                        <input type="number" id="batchStart" value="0" min="0">
+                        <label>to</label>
+                        <input type="number" id="batchEnd" value="0" min="0">
+                    </div>
+                    <div class="button-row">
+                        <button class="btn-batch" id="batchExtractBtn">Extract Batch</button>
+                    </div>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                        <div class="progress-text" id="progressText">Extracting...</div>
+                    </div>
+                </div>
+                <div class="button-row" style="margin-top: 20px;">
+                    <button class="btn-secondary" id="newVideoBtn">Load New Video</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BULK MODE -->
+        <div id="bulkMode" class="bulk-section">
+            <div class="drop-zone" id="bulkDropZone">
+                <div class="drop-zone-icon">[ ++ ]</div>
+                <p>Drag & drop multiple video files here</p>
+                <small>or click to browse - Select multiple .mov and .mp4 files</small>
+                <input type="file" id="bulkFileInput" accept=".mov,.mp4,video/quicktime,video/mp4" multiple>
+            </div>
+
+            <div class="file-list" id="fileList" style="display: none;">
+                <h4>Videos to Process (<span id="fileCount">0</span>)</h4>
+                <div id="fileListItems"></div>
+            </div>
+
+            <div class="bulk-options" id="bulkOptions" style="display: none;">
+                <h4>Extract Options</h4>
+                <div class="option-row">
+                    <div class="option-item selected" id="optFirst">
+                        <input type="checkbox" id="checkFirst" checked>
+                        <label for="checkFirst">|&lt;&lt; First Frame</label>
+                    </div>
+                    <div class="option-item selected" id="optLast">
+                        <input type="checkbox" id="checkLast" checked>
+                        <label for="checkLast">Last Frame &gt;&gt;|</label>
+                    </div>
+                </div>
+                <div class="button-row" style="margin-top: 20px;">
+                    <button class="btn-batch" id="bulkProcessBtn">Process All Videos</button>
+                    <button class="btn-secondary" id="clearBulkBtn">Clear All</button>
+                </div>
+                <div class="progress-container" id="bulkProgressContainer">
+                    <div class="progress-bar"><div class="progress-fill" id="bulkProgressFill"></div></div>
+                    <div class="progress-text" id="bulkProgressText">Ready to process...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden video for bulk processing -->
+    <video id="bulkVideoPlayer" style="display: none;" preload="metadata"></video>
+
+    <script>
+        // ========== SINGLE VIDEO MODE ==========
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const videoSection = document.getElementById('videoSection');
+        const previewSection = document.getElementById('previewSection');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const frameScrubber = document.getElementById('frameScrubber');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const exportCanvas = document.getElementById('exportCanvas');
+        const filenameInput = document.getElementById('filenameInput');
+        const frameNumberInput = document.getElementById('frameNumberInput');
+        const currentFrameLabel = document.getElementById('currentFrameLabel');
+        const currentTimeLabel = document.getElementById('currentTimeLabel');
+        const durationInfo = document.getElementById('durationInfo');
+        const resolutionInfo = document.getElementById('resolutionInfo');
+        const framesInfo = document.getElementById('framesInfo');
+        const batchToggle = document.getElementById('batchToggle');
+        const batchSection = document.getElementById('batchSection');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        let estimatedFPS = 30, totalFrames = 0, currentFrame = 0, videoLoaded = false, isExtracting = false;
+
+        // Mode switching
+        const singleModeTab = document.getElementById('singleModeTab');
+        const bulkModeTab = document.getElementById('bulkModeTab');
+        const singleMode = document.getElementById('singleMode');
+        const bulkMode = document.getElementById('bulkMode');
+
+        singleModeTab.addEventListener('click', () => {
+            singleModeTab.classList.add('active');
+            bulkModeTab.classList.remove('active');
+            singleMode.style.display = 'block';
+            bulkMode.classList.remove('active');
+        });
+
+        bulkModeTab.addEventListener('click', () => {
+            bulkModeTab.classList.add('active');
+            singleModeTab.classList.remove('active');
+            singleMode.style.display = 'none';
+            bulkMode.classList.add('active');
+        });
+
+        // Single video handlers
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && (file.type.includes('video') || file.name.match(/\.(mov|mp4)$/i))) loadVideo(file);
+        });
+        fileInput.addEventListener('change', (e) => { if (e.target.files[0]) loadVideo(e.target.files[0]); });
+
+        function loadVideo(file) {
+            videoPlayer.src = URL.createObjectURL(file);
+            filenameInput.value = file.name.replace(/\.[^/.]+$/, '') + '_frame';
+            videoPlayer.addEventListener('loadedmetadata', () => {
+                videoLoaded = true;
+                totalFrames = Math.floor(videoPlayer.duration * estimatedFPS);
+                durationInfo.textContent = formatTime(videoPlayer.duration);
+                resolutionInfo.textContent = `${videoPlayer.videoWidth} x ${videoPlayer.videoHeight}`;
+                framesInfo.textContent = `~${totalFrames}`;
+                frameScrubber.max = totalFrames - 1;
+                document.getElementById('batchEnd').value = totalFrames - 1;
+                dropZone.style.display = 'none';
+                videoSection.classList.add('active');
+                previewSection.classList.add('active');
+                goToFrame(0);
+            }, { once: true });
+        }
+
+        function goToFrame(frameNum) {
+            frameNum = Math.max(0, Math.min(frameNum, totalFrames - 1));
+            currentFrame = frameNum;
+            videoPlayer.currentTime = frameNum / estimatedFPS;
+            frameScrubber.value = frameNum;
+            frameNumberInput.value = frameNum;
+            currentFrameLabel.textContent = currentFrame;
+            currentTimeLabel.textContent = formatTimePrecise(videoPlayer.currentTime);
+        }
+
+        function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
+        function formatTimePrecise(s) { return `${Math.floor(s/60)}:${(s%60).toFixed(3).padStart(6,'0')}`; }
+
+        function captureFrame() {
+            const ctx = previewCanvas.getContext('2d'), exportCtx = exportCanvas.getContext('2d');
+            const w = videoPlayer.videoWidth, h = videoPlayer.videoHeight, scale = Math.min(1, 800/w);
+            previewCanvas.width = w*scale; previewCanvas.height = h*scale;
+            exportCanvas.width = w; exportCanvas.height = h;
+            ctx.drawImage(videoPlayer, 0, 0, previewCanvas.width, previewCanvas.height);
+            exportCtx.drawImage(videoPlayer, 0, 0, w, h);
+        }
+
+        function captureFrameAt(frameNum) {
+            return new Promise(resolve => {
+                videoPlayer.currentTime = frameNum / estimatedFPS;
+                videoPlayer.onseeked = () => {
+                    const c = document.createElement('canvas');
+                    c.width = videoPlayer.videoWidth; c.height = videoPlayer.videoHeight;
+                    c.getContext('2d').drawImage(videoPlayer, 0, 0);
+                    resolve(c.toDataURL('image/png'));
+                };
+            });
+        }
+
+        function download(dataUrl, filename) {
+            const a = document.createElement('a'); a.download = filename; a.href = dataUrl; a.click();
+        }
+
+        videoPlayer.addEventListener('seeked', () => { if (videoLoaded && !isExtracting) captureFrame(); });
+        frameScrubber.addEventListener('input', (e) => goToFrame(parseInt(e.target.value)));
+        document.getElementById('firstFrameBtn').addEventListener('click', () => goToFrame(0));
+        document.getElementById('lastFrameBtn').addEventListener('click', () => goToFrame(totalFrames - 1));
+        document.getElementById('prevFrameBtn').addEventListener('click', () => goToFrame(currentFrame - 1));
+        document.getElementById('nextFrameBtn').addEventListener('click', () => goToFrame(currentFrame + 1));
+        document.getElementById('goToFrameBtn').addEventListener('click', () => { const n = parseInt(frameNumberInput.value); if (!isNaN(n)) goToFrame(n); });
+        frameNumberInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { const n = parseInt(frameNumberInput.value); if (!isNaN(n)) goToFrame(n); }});
+
+        document.getElementById('extractBtn').addEventListener('click', () => {
+            download(exportCanvas.toDataURL('image/png'), `${filenameInput.value || 'frame'}_${currentFrame}.png`);
+        });
+
+        document.getElementById('extractFirstLastBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('extractFirstLastBtn');
+            btn.disabled = true; btn.textContent = 'Extracting...'; isExtracting = true;
+            const name = filenameInput.value || 'frame';
+            download(await captureFrameAt(0), `${name}_first_0.png`);
+            await new Promise(r => setTimeout(r, 300));
+            download(await captureFrameAt(totalFrames - 1), `${name}_last_${totalFrames - 1}.png`);
+            goToFrame(currentFrame);
+            isExtracting = false; btn.disabled = false; btn.textContent = '|<< First & Last >>|';
+        });
+
+        batchToggle.addEventListener('click', () => { batchToggle.classList.toggle('active'); batchSection.classList.toggle('active'); });
+
+        document.getElementById('batchExtractBtn').addEventListener('click', async () => {
+            const name = filenameInput.value || 'frame';
+            const interval = parseInt(document.getElementById('batchInterval').value) || 30;
+            const unit = document.getElementById('batchUnit').value;
+            const start = parseInt(document.getElementById('batchStart').value) || 0;
+            const end = parseInt(document.getElementById('batchEnd').value) || totalFrames - 1;
+            const step = unit === 'seconds' ? interval * estimatedFPS : interval;
+            const frames = [];
+            for (let f = start; f <= end; f += step) frames.push(Math.floor(f));
+            if (frames[frames.length - 1] !== end) frames.push(end);
+
+            document.getElementById('batchExtractBtn').disabled = true;
+            progressContainer.classList.add('active'); isExtracting = true;
+
+            for (let i = 0; i < frames.length; i++) {
+                progressText.textContent = `Extracting ${i + 1} of ${frames.length}...`;
+                progressFill.style.width = `${((i + 1) / frames.length) * 100}%`;
+                download(await captureFrameAt(frames[i]), `${name}_${frames[i]}.png`);
+                await new Promise(r => setTimeout(r, 200));
+            }
+            progressText.textContent = `Done! Extracted ${frames.length} frames.`;
+            goToFrame(currentFrame); isExtracting = false;
+            document.getElementById('batchExtractBtn').disabled = false;
+            setTimeout(() => { progressContainer.classList.remove('active'); progressFill.style.width = '0%'; }, 3000);
+        });
+
+        document.getElementById('newVideoBtn').addEventListener('click', () => {
+            videoLoaded = false; videoPlayer.src = '';
+            videoSection.classList.remove('active'); previewSection.classList.remove('active');
+            batchSection.classList.remove('active'); batchToggle.classList.remove('active');
+            dropZone.style.display = 'block'; fileInput.value = '';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!videoLoaded || isExtracting || document.activeElement.tagName === 'INPUT') return;
+            switch(e.key) {
+                case 'ArrowLeft': goToFrame(currentFrame - 1); break;
+                case 'ArrowRight': goToFrame(currentFrame + 1); break;
+                case 'Home': goToFrame(0); break;
+                case 'End': goToFrame(totalFrames - 1); break;
+                case 's': case 'S': document.getElementById('extractBtn').click(); break;
+                case 'b': case 'B': document.getElementById('extractFirstLastBtn').click(); break;
+            }
+        });
+
+        // ========== BULK MODE ==========
+        const bulkDropZone = document.getElementById('bulkDropZone');
+        const bulkFileInput = document.getElementById('bulkFileInput');
+        const fileList = document.getElementById('fileList');
+        const fileListItems = document.getElementById('fileListItems');
+        const fileCount = document.getElementById('fileCount');
+        const bulkOptions = document.getElementById('bulkOptions');
+        const bulkVideoPlayer = document.getElementById('bulkVideoPlayer');
+        const bulkProgressContainer = document.getElementById('bulkProgressContainer');
+        const bulkProgressFill = document.getElementById('bulkProgressFill');
+        const bulkProgressText = document.getElementById('bulkProgressText');
+
+        let bulkFiles = [];
+
+        bulkDropZone.addEventListener('click', () => bulkFileInput.click());
+        bulkDropZone.addEventListener('dragover', (e) => { e.preventDefault(); bulkDropZone.classList.add('dragover'); });
+        bulkDropZone.addEventListener('dragleave', () => bulkDropZone.classList.remove('dragover'));
+        bulkDropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); bulkDropZone.classList.remove('dragover');
+            addBulkFiles(Array.from(e.dataTransfer.files).filter(f => f.type.includes('video') || f.name.match(/\.(mov|mp4)$/i)));
+        });
+        bulkFileInput.addEventListener('change', (e) => addBulkFiles(Array.from(e.target.files)));
+
+        function addBulkFiles(files) {
+            files.forEach(f => { if (!bulkFiles.find(x => x.name === f.name)) bulkFiles.push(f); });
+            renderFileList();
+        }
+
+        function renderFileList() {
+            if (bulkFiles.length === 0) {
+                fileList.style.display = 'none';
+                bulkOptions.style.display = 'none';
+                return;
+            }
+            fileList.style.display = 'block';
+            bulkOptions.style.display = 'block';
+            fileCount.textContent = bulkFiles.length;
+            fileListItems.innerHTML = bulkFiles.map((f, i) => `
+                <div class="file-item" data-index="${i}">
+                    <span class="file-item-name">${f.name}</span>
+                    <span class="file-item-status" id="status-${i}">Pending</span>
+                    <button class="file-item-remove" onclick="removeBulkFile(${i})">x</button>
+                </div>
+            `).join('');
+        }
+
+        window.removeBulkFile = (i) => { bulkFiles.splice(i, 1); renderFileList(); };
+
+        // Option toggles
+        document.getElementById('optFirst').addEventListener('click', (e) => {
+            if (e.target.tagName !== 'INPUT') document.getElementById('checkFirst').checked = !document.getElementById('checkFirst').checked;
+            document.getElementById('optFirst').classList.toggle('selected', document.getElementById('checkFirst').checked);
+        });
+        document.getElementById('optLast').addEventListener('click', (e) => {
+            if (e.target.tagName !== 'INPUT') document.getElementById('checkLast').checked = !document.getElementById('checkLast').checked;
+            document.getElementById('optLast').classList.toggle('selected', document.getElementById('checkLast').checked);
+        });
+        document.getElementById('checkFirst').addEventListener('change', (e) => document.getElementById('optFirst').classList.toggle('selected', e.target.checked));
+        document.getElementById('checkLast').addEventListener('change', (e) => document.getElementById('optLast').classList.toggle('selected', e.target.checked));
+
+        document.getElementById('clearBulkBtn').addEventListener('click', () => { bulkFiles = []; renderFileList(); bulkFileInput.value = ''; });
+
+        // Bulk process
+        document.getElementById('bulkProcessBtn').addEventListener('click', async () => {
+            const extractFirst = document.getElementById('checkFirst').checked;
+            const extractLast = document.getElementById('checkLast').checked;
+            if (!extractFirst && !extractLast) { alert('Please select at least one option (First or Last frame)'); return; }
+            if (bulkFiles.length === 0) { alert('Please add some video files first'); return; }
+
+            const btn = document.getElementById('bulkProcessBtn');
+            btn.disabled = true;
+            bulkProgressContainer.classList.add('active');
+
+            for (let i = 0; i < bulkFiles.length; i++) {
+                const file = bulkFiles[i];
+                const statusEl = document.getElementById(`status-${i}`);
+                statusEl.textContent = 'Processing...';
+                statusEl.className = 'file-item-status processing';
+                bulkProgressText.textContent = `Processing ${i + 1} of ${bulkFiles.length}: ${file.name}`;
+                bulkProgressFill.style.width = `${((i + 0.5) / bulkFiles.length) * 100}%`;
+
+                try {
+                    const frames = await extractFramesFromFile(file, extractFirst, extractLast);
+                    for (const { data, filename } of frames) {
+                        download(data, filename);
+                        await new Promise(r => setTimeout(r, 150));
+                    }
+                    statusEl.textContent = 'Done';
+                    statusEl.className = 'file-item-status done';
+                } catch (err) {
+                    console.error(err);
+                    statusEl.textContent = 'Error';
+                    statusEl.className = 'file-item-status error';
+                }
+                bulkProgressFill.style.width = `${((i + 1) / bulkFiles.length) * 100}%`;
+            }
+
+            bulkProgressText.textContent = `Done! Processed ${bulkFiles.length} videos.`;
+            btn.disabled = false;
+            setTimeout(() => { bulkProgressContainer.classList.remove('active'); bulkProgressFill.style.width = '0%'; }, 3000);
+        });
+
+        function extractFramesFromFile(file, first, last) {
+            return new Promise((resolve, reject) => {
+                const video = bulkVideoPlayer;
+                video.src = URL.createObjectURL(file);
+                video.onloadedmetadata = async () => {
+                    const fps = 30;
+                    const total = Math.floor(video.duration * fps);
+                    const baseName = file.name.replace(/\.[^/.]+$/, '');
+                    const results = [];
+
+                    const captureAt = (frameNum) => new Promise(res => {
+                        video.currentTime = frameNum / fps;
+                        video.onseeked = () => {
+                            const c = document.createElement('canvas');
+                            c.width = video.videoWidth; c.height = video.videoHeight;
+                            c.getContext('2d').drawImage(video, 0, 0);
+                            res(c.toDataURL('image/png'));
+                        };
+                    });
+
+                    if (first) results.push({ data: await captureAt(0), filename: `${baseName}_first.png` });
+                    if (last) results.push({ data: await captureAt(total - 1), filename: `${baseName}_last.png` });
+
+                    URL.revokeObjectURL(video.src);
+                    resolve(results);
+                };
+                video.onerror = reject;
+            });
+        }
+    </script>
+</body>
+</html>
