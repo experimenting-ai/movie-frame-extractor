@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>framelab — by experimenting.ai</title>
+  <title>lastframe.ai — by experimenting.ai</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -41,7 +41,7 @@
 
     const translations = {
       en: {
-        brand: 'framelab',
+        brand: 'lastframe.ai',
         tagline: 'Frame Extraction',
         title: 'Pull frames from any video.',
         subtitle: 'Drag, scrub, extract. Full resolution, entirely in your browser. No upload, no server.',
@@ -102,7 +102,7 @@
         byLine: 'An experimenting.ai tool'
       },
       fr: {
-        brand: 'framelab',
+        brand: 'lastframe.ai',
         tagline: 'Extraction d\'images',
         title: 'Capturez des images de n\'importe quelle vidéo.',
         subtitle: 'Glissez, naviguez, extrayez. Pleine résolution, entièrement dans votre navigateur. Aucun téléversement, aucun serveur.',
@@ -263,7 +263,6 @@
     const SingleMode = () => {
       const { t } = useLang();
       const videoRef = useRef(null);
-      const previewRef = useRef(null);
       const exportRef = useRef(null);
 
       // Render state
@@ -333,16 +332,13 @@
         return () => v.removeEventListener('loadedmetadata', onMeta);
       }, [videoSrc]);
 
-      // Capture preview on every seek (unless extracting)
+      // Capture frame to export canvas on every seek (unless extracting)
       const capturePreview = useCallback(() => {
         const v = videoRef.current;
-        const preview = previewRef.current;
         const exp = exportRef.current;
-        if (!v || !preview || !exp || v.videoWidth === 0) return;
-        const w = v.videoWidth, h = v.videoHeight, scale = Math.min(1, 800 / w);
-        preview.width = w * scale; preview.height = h * scale;
+        if (!v || !exp || v.videoWidth === 0) return;
+        const w = v.videoWidth, h = v.videoHeight;
         exp.width = w; exp.height = h;
-        preview.getContext('2d').drawImage(v, 0, 0, preview.width, preview.height);
         exp.getContext('2d').drawImage(v, 0, 0, w, h);
       }, []);
 
@@ -453,6 +449,15 @@
         <div className="space-y-6">
           {!videoLoaded && <DropZone onFiles={loadVideo} />}
 
+          {/* Load New Video — top right */}
+          {videoLoaded && (
+            <div className="flex justify-end">
+              <button onClick={resetVideo} className="text-sm text-gray-400 hover:text-white transition-colors border border-gray-700 rounded-full px-5 py-2 hover:border-gray-500">
+                {t.loadNew}
+              </button>
+            </div>
+          )}
+
           {/* Video Player — always mounted, hidden until loaded */}
           <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-6 space-y-6 ${videoLoaded ? '' : 'hidden'}`}>
             <div className="max-w-3xl mx-auto rounded-xl overflow-hidden bg-black">
@@ -493,11 +498,7 @@
 
             {/* Preview & Export */}
             <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-6 space-y-6 ${videoLoaded ? '' : 'hidden'}`}>
-              <p className="text-sm font-semibold gradient-text uppercase tracking-wider">{t.framePreview}</p>
-              <div className="text-center">
-                <canvas ref={previewRef} className="max-w-full rounded-xl shadow-2xl shadow-black/30 mx-auto" />
-                <canvas ref={exportRef} className="hidden-canvas" />
-              </div>
+              <canvas ref={exportRef} className="hidden-canvas" />
 
               {/* Filename */}
               <div className="flex justify-center items-center gap-3 flex-wrap">
@@ -559,10 +560,6 @@
                 </div>
               )}
 
-              {/* Load New */}
-              <div className="text-center pt-4">
-                <button onClick={resetVideo} className="text-sm text-gray-500 hover:text-white transition-colors">{t.loadNew}</button>
-              </div>
             </div>
         </div>
       );
