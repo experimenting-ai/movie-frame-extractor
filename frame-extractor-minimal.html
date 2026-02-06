@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>lastframe.ai — by experimenting.ai</title>
+  <title>framelab — by experimenting.ai</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -41,10 +41,11 @@
 
     const translations = {
       en: {
-        brand: 'lastframe.ai',
+        brand: 'framelab',
         tagline: 'Frame Extraction',
         title: 'Pull frames from any video.',
-        subtitle: 'Drag, scrub, extract. Full resolution, entirely in your browser. No upload, no server.',
+        subtitle: 'Drag, scrub, extract. Full resolution, entirely in your browser.',
+        subtitle2: 'No upload, no server.',
         singleMode: 'Single Video',
         bulkMode: 'Bulk Process',
         dropTitle: 'Drag & drop your video file here',
@@ -102,10 +103,11 @@
         byLine: 'An experimenting.ai tool'
       },
       fr: {
-        brand: 'lastframe.ai',
+        brand: 'framelab',
         tagline: 'Extraction d\'images',
         title: 'Capturez des images de n\'importe quelle vidéo.',
-        subtitle: 'Glissez, naviguez, extrayez. Pleine résolution, entièrement dans votre navigateur. Aucun téléversement, aucun serveur.',
+        subtitle: 'Glissez, naviguez, extrayez. Pleine résolution, entièrement dans votre navigateur.',
+        subtitle2: 'Aucun téléversement, aucun serveur.',
         singleMode: 'Vidéo unique',
         bulkMode: 'Traitement en lot',
         dropTitle: 'Glissez-déposez votre fichier vidéo ici',
@@ -189,9 +191,9 @@
     const Header = () => {
       const { t } = useLang();
       return (
-        <header className="pt-10 pb-12 px-6">
+        <header className="pt-8 pb-6 px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-6">
               <Logo />
               <LangSwitch />
             </div>
@@ -200,23 +202,24 @@
               <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest border border-gray-700 px-3 py-1 rounded-full">{t.tagline}</span>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-white mt-4 mb-3 leading-tight max-w-3xl">{t.title}</p>
-            <p className="text-lg text-gray-400 max-w-2xl leading-relaxed">{t.subtitle}</p>
+            <p className="text-lg text-gray-400 max-w-2xl leading-relaxed">{t.subtitle}<br />{t.subtitle2}</p>
           </div>
         </header>
       );
     };
 
     // ─── Mode Tabs ───
-    const ModeTabs = ({ mode, setMode }) => {
+    const ModeTabs = ({ mode, setMode, rightSlot }) => {
       const { t } = useLang();
       return (
-        <div className="flex gap-3 mb-8">
-          <button onClick={() => setMode('single')} className={`px-6 py-3 rounded-full text-sm font-semibold transition-all ${mode === 'single' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
+        <div className="flex items-center gap-3 mb-5">
+          <button onClick={() => setMode('single')} className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${mode === 'single' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
             {t.singleMode}
           </button>
-          <button onClick={() => setMode('bulk')} className={`px-6 py-3 rounded-full text-sm font-semibold transition-all ${mode === 'bulk' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
+          <button onClick={() => setMode('bulk')} className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${mode === 'bulk' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
             {t.bulkMode}
           </button>
+          {rightSlot && <div className="ml-auto">{rightSlot}</div>}
         </div>
       );
     };
@@ -237,7 +240,7 @@
           onDragOver={(e) => { e.preventDefault(); setDragover(true); }}
           onDragLeave={() => setDragover(false)}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragover ? 'border-purple-500 bg-purple-500/5' : 'border-gray-700 hover:border-gray-500 bg-white/[0.02]'}`}
+          className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all ${dragover ? 'border-purple-500 bg-purple-500/5' : 'border-gray-700 hover:border-gray-500 bg-white/[0.02]'}`}
         >
           <div className="text-5xl mb-4 opacity-30">&#9654;</div>
           <p className="text-lg text-gray-300 font-medium mb-2">{t[titleKey]}</p>
@@ -253,14 +256,14 @@
 
     // ─── Info Pill ───
     const InfoPill = ({ label, value }) => (
-      <div className="bg-white/5 border border-gray-800 rounded-xl px-5 py-3 text-center">
-        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1">{label}</p>
-        <p className="text-lg font-bold text-white">{value}</p>
+      <div className="bg-white/5 border border-gray-800 rounded-lg px-3 py-2 text-center">
+        <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5">{label}</p>
+        <p className="text-sm font-bold text-white">{value}</p>
       </div>
     );
 
     // ─── Single Video Mode ───
-    const SingleMode = () => {
+    const SingleMode = ({ setActionSlot }) => {
       const { t } = useLang();
       const videoRef = useRef(null);
       const exportRef = useRef(null);
@@ -428,6 +431,23 @@
         setIsExtracting(false); isExtractingRef.current = false;
       };
 
+      // Push "Load New Video" button into the tabs row via App state
+      const resetVideoRef = useRef(null);
+      resetVideoRef.current = resetVideo;
+      useEffect(() => {
+        if (videoLoaded) {
+          setActionSlot(
+            React.createElement('button', {
+              onClick: () => resetVideoRef.current?.(),
+              className: 'text-sm text-gray-400 hover:text-white transition-colors border border-gray-700 rounded-full px-5 py-2 hover:border-gray-500'
+            }, t.loadNew)
+          );
+        } else {
+          setActionSlot(null);
+        }
+        return () => setActionSlot(null);
+      }, [videoLoaded, t.loadNew, setActionSlot]);
+
       // Keyboard shortcuts — reads from refs, never stale
       useEffect(() => {
         const handleKey = (e) => {
@@ -446,87 +466,72 @@
       }, [goToFrame, saveCurrent, extractFirstLast]);
 
       return (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {!videoLoaded && <DropZone onFiles={loadVideo} />}
 
-          {/* Load New Video — top right */}
-          {videoLoaded && (
-            <div className="flex justify-end">
-              <button onClick={resetVideo} className="text-sm text-gray-400 hover:text-white transition-colors border border-gray-700 rounded-full px-5 py-2 hover:border-gray-500">
-                {t.loadNew}
-              </button>
-            </div>
-          )}
-
           {/* Video Player — always mounted, hidden until loaded */}
-          <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-6 space-y-6 ${videoLoaded ? '' : 'hidden'}`}>
-            <div className="max-w-3xl mx-auto rounded-xl overflow-hidden bg-black">
+          <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-4 space-y-3 ${videoLoaded ? '' : 'hidden'}`}>
+            <div className="rounded-xl overflow-hidden bg-black">
               <video ref={videoRef} className="w-full block" preload="metadata" />
             </div>
 
                 {/* Scrubber */}
                 <div>
-                  <div className="flex justify-between text-sm text-gray-400 mb-3">
+                  <div className="flex justify-between text-xs text-gray-400 mb-2">
                     <span>{t.frame}: <strong className="text-white">{currentFrame}</strong></span>
                     <span>{t.time}: <strong className="text-white">{formatTimePrecise(currentFrame / fps)}</strong></span>
                   </div>
                   <input type="range" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value))} />
                 </div>
 
-                {/* Info Row */}
-                <div className="flex justify-center gap-4 flex-wrap">
-                  <InfoPill label={t.duration} value={duration} />
-                  <InfoPill label={t.resolution} value={resolution} />
-                  <InfoPill label={t.estFrames} value={framesCount} />
-                </div>
-
-                {/* Navigation Buttons */}
-                <div className="flex justify-center gap-3 flex-wrap">
-                  <button onClick={() => goToFrame(0)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">|&#9664; {t.first}</button>
-                  <button onClick={() => goToFrame(currentFrame - 1)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">&#9664; {t.prev}</button>
-                  <button onClick={() => goToFrame(currentFrame + 1)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.next} &#9654;</button>
-                  <button onClick={() => goToFrame(totalFrames - 1)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.last} &#9654;|</button>
-                </div>
-
-                {/* Go to frame */}
-                <div className="flex justify-center items-center gap-3">
-                  <label className="text-sm text-gray-400">{t.goToFrame}:</label>
-                  <input type="number" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value) || 0)}
-                    className="w-24 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500 transition-colors" />
-                </div>
               </div>
 
-            {/* Preview & Export */}
-            <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-6 space-y-6 ${videoLoaded ? '' : 'hidden'}`}>
-              <canvas ref={exportRef} className="hidden-canvas" />
+          {/* Two cards side by side below the video */}
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 ${videoLoaded ? '' : 'hidden'}`}>
 
-              {/* Filename */}
-              <div className="flex justify-center items-center gap-3 flex-wrap">
+            {/* Left card: Video Info & Navigation */}
+            <div className="bg-white/[0.03] border border-gray-800 rounded-2xl p-5 space-y-4">
+              <div className="grid grid-cols-3 gap-3">
+                <InfoPill label={t.duration} value={duration} />
+                <InfoPill label={t.resolution} value={resolution} />
+                <InfoPill label={t.estFrames} value={framesCount} />
+              </div>
+              <div className="flex justify-center gap-2 flex-wrap">
+                <button onClick={() => goToFrame(0)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">|&#9664; {t.first}</button>
+                <button onClick={() => goToFrame(currentFrame - 1)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">&#9664; {t.prev}</button>
+                <button onClick={() => goToFrame(currentFrame + 1)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.next} &#9654;</button>
+                <button onClick={() => goToFrame(totalFrames - 1)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.last} &#9654;|</button>
+              </div>
+              <div className="flex justify-center items-center gap-3">
+                <label className="text-sm text-gray-400">{t.goToFrame}:</label>
+                <input type="number" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value) || 0)}
+                  className="w-24 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500 transition-colors" />
+              </div>
+            </div>
+
+            {/* Right card: Export Controls */}
+            <div className="bg-white/[0.03] border border-gray-800 rounded-2xl p-5 space-y-4">
+              <canvas ref={exportRef} className="hidden-canvas" />
+              <div className="flex items-center gap-3 flex-wrap">
                 <label className="text-sm text-gray-400">{t.filename}:</label>
                 <input type="text" value={filename} onChange={(e) => { setFilename(e.target.value); filenameRef.current = e.target.value; }}
-                  className="px-4 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 transition-colors w-64" />
+                  className="flex-1 min-w-0 px-4 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" />
                 <span className="text-gray-500 text-sm">.png</span>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-center gap-3 flex-wrap">
-                <button onClick={saveCurrent} disabled={isExtracting} className="px-6 py-3 bg-gradient text-white font-semibold rounded-full hover-lift shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed">{t.saveCurrent}</button>
-                <button onClick={extractFirstLast} disabled={isExtracting} className="px-6 py-3 bg-white text-black font-semibold rounded-full hover-lift disabled:opacity-50 disabled:cursor-not-allowed">{t.firstAndLast}</button>
+              <div className="flex gap-3 flex-wrap">
+                <button onClick={saveCurrent} disabled={isExtracting} className="flex-1 px-4 py-2.5 bg-gradient text-white font-semibold rounded-full hover-lift shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed text-xs">{t.saveCurrent}</button>
+                <button onClick={extractFirstLast} disabled={isExtracting} className="flex-1 px-4 py-2.5 bg-white text-black font-semibold rounded-full hover-lift disabled:opacity-50 disabled:cursor-not-allowed text-xs">{t.firstAndLast}</button>
               </div>
-
-              {/* Batch Toggle */}
               <div className="flex justify-center items-center gap-3">
                 <span className="text-sm text-gray-400">{t.batchMode}</span>
                 <button onClick={() => setShowBatch(!showBatch)} className={`w-12 h-6 rounded-full transition-all relative ${showBatch ? 'bg-gradient' : 'bg-gray-700'}`}>
                   <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform shadow ${showBatch ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
               </div>
-
-              {/* Batch Section */}
               {showBatch && (
-                <div className="bg-white/[0.03] border border-gray-800 rounded-xl p-6 space-y-4">
-                  <p className="text-sm font-medium text-gray-300 text-center">{t.batchExport}</p>
-                  <div className="flex justify-center items-center gap-3 flex-wrap">
+                <div className="bg-white/[0.03] border border-gray-800 rounded-xl p-5 space-y-4">
+                  <p className="text-sm font-medium text-gray-300">{t.batchExport}</p>
+                  <div className="flex items-center gap-3 flex-wrap">
                     <label className="text-sm text-gray-400">{t.extractEvery}</label>
                     <input type="number" value={batchInterval} min="1" onChange={(e) => setBatchInterval(parseInt(e.target.value) || 1)}
                       className="w-20 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500" />
@@ -536,7 +541,7 @@
                       <option value="seconds" className="bg-black">{t.seconds}</option>
                     </select>
                   </div>
-                  <div className="flex justify-center items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <label className="text-sm text-gray-400">{t.fromFrame}</label>
                     <input type="number" value={batchStart} min="0" onChange={(e) => setBatchStart(parseInt(e.target.value) || 0)}
                       className="w-20 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500" />
@@ -544,23 +549,32 @@
                     <input type="number" value={batchEnd} min="0" onChange={(e) => setBatchEnd(parseInt(e.target.value) || 0)}
                       className="w-20 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500" />
                   </div>
-                  <div className="text-center">
-                    <button onClick={runBatch} disabled={isExtracting} className="px-6 py-3 border border-gray-600 text-white font-semibold rounded-full hover:border-white transition-colors disabled:opacity-50">{t.extractBatch}</button>
-                  </div>
+                  <button onClick={runBatch} disabled={isExtracting} className="w-full px-5 py-3 border border-gray-600 text-white font-semibold rounded-full hover:border-white transition-colors disabled:opacity-50 text-sm">{t.extractBatch}</button>
                   {progress && (
                     <div className="space-y-2">
                       <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                         <div className="h-full bg-gradient transition-all rounded-full" style={{ width: `${(progress.current / progress.total) * 100}%` }} />
                       </div>
-                      <p className="text-xs text-gray-400 text-center">
+                      <p className="text-xs text-gray-400">
                         {progress.done ? `${t.done}! ${progress.total} ${t.frames} ${t.extracted}.` : `${t.extracting} ${progress.current} ${t.of} ${progress.total}...`}
                       </p>
                     </div>
                   )}
                 </div>
               )}
-
             </div>
+
+          </div>
+
+          {/* Keyboard Shortcuts — same row as the cards */}
+          <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-5 ${videoLoaded ? '' : 'hidden'}`}>
+            <p className="text-xs font-semibold gradient-text uppercase tracking-wider mb-3">{t.keyboardShortcuts}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              {[t.shortcutArrows, t.shortcutHomeEnd, t.shortcutS, t.shortcutB].map((s, i) => (
+                <p key={i} className="text-xs text-gray-500">{s}</p>
+              ))}
+            </div>
+          </div>
         </div>
       );
     };
@@ -702,24 +716,15 @@
     const FooterSection = () => {
       const { t } = useLang();
       return (
-        <footer className="mt-16 pb-12 px-6">
+        <footer className="mt-8 pb-8 px-6">
           <div className="max-w-5xl mx-auto">
-            {/* Keyboard shortcuts */}
-            <div className="bg-white/[0.03] border border-gray-800 rounded-2xl p-6 mb-8">
-              <p className="text-sm font-semibold gradient-text uppercase tracking-wider mb-4">{t.keyboardShortcuts}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {[t.shortcutArrows, t.shortcutHomeEnd, t.shortcutS, t.shortcutB].map((s, i) => (
-                  <p key={i} className="text-sm text-gray-500">{s}</p>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-800">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-6 border-t border-gray-800">
               <div className="flex items-center gap-3">
-                <span className="text-lg font-bold gradient-text">{t.brand}</span>
+                <span className="text-sm font-bold gradient-text">{t.brand}</span>
                 <span className="text-xs text-gray-600">|</span>
                 <Logo />
               </div>
-              <p className="text-xs text-gray-500">{t.byLine}</p>
+              <p className="text-[11px] text-gray-500">{t.byLine}</p>
             </div>
           </div>
         </footer>
@@ -730,6 +735,7 @@
     function App() {
       const [lang, setLang] = useState('en');
       const [mode, setMode] = useState('single');
+      const [actionSlot, setActionSlot] = useState(null);
       const t = translations[lang];
 
       return (
@@ -738,8 +744,8 @@
             <Header />
             <main className="px-6 pb-8">
               <div className="max-w-5xl mx-auto">
-                <ModeTabs mode={mode} setMode={setMode} />
-                {mode === 'single' ? <SingleMode /> : <BulkMode />}
+                <ModeTabs mode={mode} setMode={setMode} rightSlot={mode === 'single' ? actionSlot : null} />
+                {mode === 'single' ? <SingleMode setActionSlot={setActionSlot} /> : <BulkMode />}
               </div>
             </main>
             <FooterSection />
