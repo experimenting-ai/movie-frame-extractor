@@ -44,7 +44,10 @@
         brand: 'framelab',
         tagline: 'Frame Extraction',
         title: 'Pull frames from any video.',
-        subtitle: 'Drag, scrub, extract. Full resolution, entirely in your browser. No upload, no server.',
+        subtitle: 'Drag, scrub, extract.',
+        subtitle2: 'Full resolution, entirely in your browser.',
+        subtitle3: 'No upload, no server.',
+        subtitle4: 'Built for AI video workflows.',
         singleMode: 'Single Video',
         bulkMode: 'Bulk Process',
         dropTitle: 'Drag & drop your video file here',
@@ -105,7 +108,10 @@
         brand: 'framelab',
         tagline: 'Extraction d\'images',
         title: 'Capturez des images de n\'importe quelle vidéo.',
-        subtitle: 'Glissez, naviguez, extrayez. Pleine résolution, entièrement dans votre navigateur. Aucun téléversement, aucun serveur.',
+        subtitle: 'Glissez, naviguez, téléchargez.',
+        subtitle2: 'Pleine résolution, entièrement dans votre navigateur.',
+        subtitle3: 'Aucun upload, aucun serveur.',
+        subtitle4: 'Exactement ce qu\'il te faut pour la production vidéo IA.',
         singleMode: 'Vidéo unique',
         bulkMode: 'Traitement en lot',
         dropTitle: 'Glissez-déposez votre fichier vidéo ici',
@@ -166,7 +172,7 @@
 
     // ─── Logo ───
     const Logo = ({ className = "" }) => (
-      <svg className={`h-5 ${className}`} viewBox="0 0 2941.95 649.86" fill="#fff">
+      <svg className={`h-8 ${className}`} viewBox="0 0 2941.95 649.86" fill="#fff">
         <path d="M565.86,242.21c15.22,0,28.78,3.54,40.66,10.63,11.89,7.09,21.22,17.36,27.99,30.81s10.17,28.93,10.17,46.45c0,1.67-.1,4.38-.31,8.13h-116.67c.42,12.93,3.81,22.99,10.17,30.18s16.11,10.79,29.25,10.79c8.13,0,15.59-2.03,22.36-6.1,6.78-4.07,11.1-9.02,12.98-14.86h39.1c-11.47,36.28-36.7,54.42-75.69,54.42-14.81-.21-28.52-3.44-41.13-9.7s-22.68-16-30.18-29.25c-7.51-13.24-11.26-28.62-11.26-46.14,0-16.47,3.81-31.49,11.42-45.04s17.72-23.67,30.34-30.34c12.62-6.67,26.22-10.01,40.82-10.01h0ZM599.95,310.08c-2.09-12.09-5.94-20.85-11.57-26.27-5.63-5.42-13.66-8.13-24.08-8.13s-19.39,3.08-25.65,9.23c-6.26,6.15-9.91,14.54-10.95,25.18h72.25ZM709.43,246.59l28.46,42.23,28.15-42.23h49.11l-53.17,75.69,59.74,86.02h-50.67l-33.78-50.98-33.78,50.98h-49.73l58.18-85.08-53.17-76.63h50.67ZM929.63,242.21c22.31,0,40.14,7.82,53.49,23.46,13.35,15.64,20.02,36.81,20.02,63.5,0,24.4-6.41,44.42-19.24,60.06s-30.08,23.46-51.77,23.46-37.43-8.13-48.48-24.4h-.63v76.95h-44.42v-218.64h42.23v20.64h.63c10.63-16.68,26.69-25.02,48.17-25.02ZM881.46,327.91c0,15.85,3.34,28.36,10.01,37.53s16.26,13.76,28.78,13.76,22.57-4.59,28.93-13.76,9.54-21.69,9.54-37.53-3.44-29.04-10.32-38.32-16.47-13.92-28.78-13.92-21.74,4.59-28.31,13.76-9.85,22-9.85,38.47ZM1104.48,242.21c15.22,0,28.78,3.54,40.66,10.63,11.89,7.09,21.22,17.36,27.99,30.81s10.17,28.93,10.17,46.45c0,1.67-.1,4.38-.31,8.13h-116.67c.42,12.93,3.81,22.99,10.17,30.18s16.11,10.79,29.25,10.79c8.13,0,15.59-2.03,22.36-6.1,6.78-4.07,11.1-9.02,12.98-14.86h39.1c-11.47,36.28-36.7,54.42-75.69,54.42-14.81-.21-28.52-3.44-41.13-9.7s-22.68-16-30.18-29.25c-7.51-13.24-11.26-28.62-11.26-46.14,0-16.47,3.81-31.49,11.42-45.04s17.72-23.67,30.34-30.34,26.22-10.01,40.82-10.01ZM1138.57,310.08c-2.09-12.09-5.94-20.85-11.57-26.27-5.63-5.42-13.66-8.13-24.08-8.13s-19.39,3.08-25.65,9.23c-6.26,6.15-9.91,14.54-10.95,25.18h72.25ZM1303.72,242.21c3.75,0,6.99.52,9.7,1.56v41.29c-4.8-1.04-10.11-1.56-15.95-1.56-29.19,0-43.79,17.31-43.79,51.92v72.88h-44.42v-161.71h42.23v30.03h.63c4.38-10.43,11.31-18.77,20.8-25.02,9.49-6.26,19.76-9.38,30.81-9.38ZM1376.6,184.97v36.6h-44.42v-36.6h44.42ZM1376.6,246.59v161.71h-44.42v-161.71h44.42ZM1504.84,242.21c23.56,0,39.31,8.97,47.23,26.9,12.3-17.93,28.67-26.9,49.11-26.9s35.09,5.11,44.57,15.33c9.49,10.22,14.23,24.29,14.23,42.23v108.54h-44.42v-93.52c0-14.18-2.14-23.98-6.41-29.4-4.27-5.42-11.21-8.13-20.8-8.13-19.81,0-29.71,13.55-29.71,40.66v90.4h-44.42v-95.4c0-13.76-2.19-23.15-6.57-28.15s-11.16-7.51-20.33-7.51c-8.55,0-15.69,3.39-21.43,10.17-5.73,6.78-8.6,15.69-8.6,26.74v94.15h-44.42v-161.71h41.91v21.9h.63c12.3-17.52,28.78-26.27,49.42-26.27ZM1769.77,242.21c15.22,0,28.78,3.54,40.66,10.63,11.89,7.09,21.22,17.36,27.99,30.81s10.17,28.93,10.17,46.45c0,1.67-.1,4.38-.31,8.13h-116.67c.42,12.93,3.81,22.99,10.17,30.18s16.11,10.79,29.25,10.79c8.13,0,15.59-2.03,22.36-6.1,6.78-4.07,11.1-9.02,12.98-14.86h39.1c-11.47,36.28-36.7,54.42-75.69,54.42-14.81-.21-28.52-3.44-41.13-9.7s-22.68-16-30.18-29.25c-7.51-13.24-11.26-28.62-11.26-46.14,0-16.47,3.81-31.49,11.42-45.04s17.72-23.67,30.34-30.34,26.22-10.01,40.82-10.01ZM1803.87,310.08c-2.09-12.09-5.94-20.85-11.57-26.27-5.63-5.42-13.66-8.13-24.08-8.13s-19.39,3.08-25.65,9.23c-6.26,6.15-9.91,14.54-10.95,25.18h72.25ZM1967.46,242.21c20.64,0,35.6,5.21,44.89,15.64,9.28,10.43,13.92,27,13.92,49.73v100.72h-44.42v-91.65c0-13.35-2.14-23.25-6.41-29.71s-11.63-9.7-22.05-9.7c-12.09,0-20.85,3.65-26.27,10.95s-8.13,19.29-8.13,35.97v84.14h-44.42v-161.71h42.23v22.52h.94c11.05-17.93,27.63-26.9,49.73-26.9ZM2116.34,198.1v48.48h32.53v29.71h-32.53v80.07c0,7.51,1.25,12.51,3.75,15.01s7.51,3.75,15.01,3.75c5.42,0,10.01-.42,13.76-1.25v34.72c-6.26,1.04-15.01,1.56-26.27,1.56-17.1,0-29.82-2.92-38.16-8.76-8.34-5.84-12.51-15.95-12.51-30.34v-94.77h-26.9v-29.71h26.9v-48.48h44.42ZM2215.81,184.97v36.6h-44.42v-36.6h44.42ZM2215.81,246.59v161.71h-44.42v-161.71h44.42ZM2343.74,242.21c20.64,0,35.6,5.21,44.89,15.64,9.28,10.43,13.92,27,13.92,49.73v100.72h-44.42v-91.65c0-13.35-2.14-23.25-6.41-29.71s-11.63-9.7-22.05-9.7c-12.09,0-20.85,3.65-26.27,10.95s-8.13,19.29-8.13,35.97v84.14h-44.42v-161.71h42.23v22.52h.94c11.05-17.93,27.63-26.9,49.73-26.9ZM2500.76,242.21c22.31,0,38.37,8.65,48.17,25.96h.63v-21.58h42.23v151.7c0,23.35-7.25,41.08-21.74,53.17s-35.09,18.14-61.78,18.14c-20.44,0-37.27-4.9-50.52-14.7-13.24-9.8-20.28-22.21-21.11-37.22h44.1c3.54,14.81,14.6,22.21,33.16,22.21,11.47,0,20.28-3.39,26.43-10.17s9.23-16.42,9.23-28.93v-22.21h-.63c-4.38,7.92-10.79,14.08-19.24,18.45-8.45,4.38-18.19,6.57-29.25,6.57-21.69,0-38.63-7.09-50.83-21.27-12.2-14.18-18.3-34.2-18.3-60.06,0-22.94,6.41-42.02,19.24-57.24s29.56-22.83,50.2-22.83ZM2475.74,321.65c0,15.22,3.18,27.11,9.54,35.66s15.17,12.82,26.43,12.82,20.64-4.12,27.53-12.36,10.32-19.13,10.32-32.69c0-16.26-3.28-28.57-9.85-36.91s-16-12.51-28.31-12.51c-11.47,0-20.28,4.33-26.43,12.98-6.15,8.65-9.23,19.65-9.23,33ZM2678.42,360.13v48.17h-49.11v-48.17h49.11ZM2788.84,242.21c47.13.21,70.69,15.53,70.69,45.98v85.7c0,15.85,1.88,27.32,5.63,34.41h-45.04c-1.67-5-2.71-10.22-3.13-15.64-13.14,13.35-31.28,20.02-54.42,20.02-16.89,0-30.29-4.27-40.19-12.82s-14.86-20.44-14.86-35.66,4.69-26.27,14.08-34.41c9.59-8.55,27-13.97,52.24-16.26,17.93-1.88,29.3-4.22,34.09-7.04s7.19-7.14,7.19-12.98c0-7.3-2.19-12.72-6.57-16.26s-11.68-5.32-21.9-5.32c-9.38,0-16.47,1.93-21.27,5.79s-7.61,10.06-8.45,18.61h-44.42c1.04-17.72,8.34-31.17,21.9-40.35s31.69-13.76,54.42-13.76ZM2751.93,362.32c0,13.76,9.07,20.64,27.21,20.64,23.77-.21,35.76-12.41,35.97-36.6v-17.2c-3.54,3.54-12.51,6.15-26.9,7.82-12.51,1.46-21.69,4.01-27.53,7.66s-8.76,9.54-8.76,17.67ZM2939.6,184.97v36.6h-44.42v-36.6h44.42ZM2939.6,246.59v161.71h-44.42v-161.71h44.42Z"/>
         <g>
           <path d="M300.76,146.57H70.44c-34.65,0-62.74,28.09-62.74,62.74v230.32c0,34.65,28.09,62.74,62.74,62.74h230.32c34.65,0,62.74-28.09,62.74-62.74v-230.32c0-34.65-28.09-62.74-62.74-62.74ZM222.57,437.69c-39.29,0-72.5-26.19-81.16-60.89-.26-1.05-1.19-1.8-2.27-1.8H57.16c-1.8,0-2.93-1.95-2.03-3.51l94.51-164.34c.9-1.57,3.16-1.57,4.06,0l94.51,164.34c.9,1.56-.23,3.51-2.03,3.51h-72.65c-1.69,0-2.86,1.75-2.15,3.29,8.11,17.63,27.44,31.48,50.65,31.48,30.39,0,54.75-28.47,54.75-59.13s-25.26-54.34-54.45-55.53c-1.25-.05-2.22-1.09-2.22-2.34v-23.26c0-1.31,1.07-2.38,2.38-2.34,45.46,1.31,82.49,39.9,82.22,85.11,0,45.99-36.14,85.42-82.13,85.42Z"/>
@@ -189,9 +195,9 @@
     const Header = () => {
       const { t } = useLang();
       return (
-        <header className="pt-10 pb-12 px-6">
+        <header className="pt-8 pb-6 px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-6">
               <Logo />
               <LangSwitch />
             </div>
@@ -200,23 +206,24 @@
               <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest border border-gray-700 px-3 py-1 rounded-full">{t.tagline}</span>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-white mt-4 mb-3 leading-tight max-w-3xl">{t.title}</p>
-            <p className="text-lg text-gray-400 max-w-2xl leading-relaxed">{t.subtitle}</p>
+            <p className="text-lg text-gray-400 max-w-2xl leading-relaxed">{t.subtitle}<br />{t.subtitle2}<br />{t.subtitle3}<br />{t.subtitle4}</p>
           </div>
         </header>
       );
     };
 
     // ─── Mode Tabs ───
-    const ModeTabs = ({ mode, setMode }) => {
+    const ModeTabs = ({ mode, setMode, rightSlot }) => {
       const { t } = useLang();
       return (
-        <div className="flex gap-3 mb-8">
-          <button onClick={() => setMode('single')} className={`px-6 py-3 rounded-full text-sm font-semibold transition-all ${mode === 'single' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
+        <div className="flex items-center gap-3 mb-5">
+          <button onClick={() => setMode('single')} className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${mode === 'single' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
             {t.singleMode}
           </button>
-          <button onClick={() => setMode('bulk')} className={`px-6 py-3 rounded-full text-sm font-semibold transition-all ${mode === 'bulk' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
+          <button onClick={() => setMode('bulk')} className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${mode === 'bulk' ? 'bg-gradient text-white shadow-lg shadow-purple-500/20' : 'border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'}`}>
             {t.bulkMode}
           </button>
+          {rightSlot && <div className="ml-auto">{rightSlot}</div>}
         </div>
       );
     };
@@ -237,7 +244,7 @@
           onDragOver={(e) => { e.preventDefault(); setDragover(true); }}
           onDragLeave={() => setDragover(false)}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${dragover ? 'border-purple-500 bg-purple-500/5' : 'border-gray-700 hover:border-gray-500 bg-white/[0.02]'}`}
+          className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all ${dragover ? 'border-purple-500 bg-purple-500/5' : 'border-gray-700 hover:border-gray-500 bg-white/[0.02]'}`}
         >
           <div className="text-5xl mb-4 opacity-30">&#9654;</div>
           <p className="text-lg text-gray-300 font-medium mb-2">{t[titleKey]}</p>
@@ -253,17 +260,16 @@
 
     // ─── Info Pill ───
     const InfoPill = ({ label, value }) => (
-      <div className="bg-white/5 border border-gray-800 rounded-xl px-5 py-3 text-center">
-        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1">{label}</p>
-        <p className="text-lg font-bold text-white">{value}</p>
+      <div className="bg-white/5 border border-gray-800 rounded-lg px-3 py-2 text-center">
+        <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5">{label}</p>
+        <p className="text-sm font-bold text-white">{value}</p>
       </div>
     );
 
     // ─── Single Video Mode ───
-    const SingleMode = () => {
+    const SingleMode = ({ setActionSlot }) => {
       const { t } = useLang();
       const videoRef = useRef(null);
-      const previewRef = useRef(null);
       const exportRef = useRef(null);
 
       // Render state
@@ -333,16 +339,13 @@
         return () => v.removeEventListener('loadedmetadata', onMeta);
       }, [videoSrc]);
 
-      // Capture preview on every seek (unless extracting)
+      // Capture frame to export canvas on every seek (unless extracting)
       const capturePreview = useCallback(() => {
         const v = videoRef.current;
-        const preview = previewRef.current;
         const exp = exportRef.current;
-        if (!v || !preview || !exp || v.videoWidth === 0) return;
-        const w = v.videoWidth, h = v.videoHeight, scale = Math.min(1, 800 / w);
-        preview.width = w * scale; preview.height = h * scale;
+        if (!v || !exp || v.videoWidth === 0) return;
+        const w = v.videoWidth, h = v.videoHeight;
         exp.width = w; exp.height = h;
-        preview.getContext('2d').drawImage(v, 0, 0, preview.width, preview.height);
         exp.getContext('2d').drawImage(v, 0, 0, w, h);
       }, []);
 
@@ -432,6 +435,23 @@
         setIsExtracting(false); isExtractingRef.current = false;
       };
 
+      // Push "Load New Video" button into the tabs row via App state
+      const resetVideoRef = useRef(null);
+      resetVideoRef.current = resetVideo;
+      useEffect(() => {
+        if (videoLoaded) {
+          setActionSlot(
+            React.createElement('button', {
+              onClick: () => resetVideoRef.current?.(),
+              className: 'text-sm text-gray-400 hover:text-white transition-colors border border-gray-700 rounded-full px-5 py-2 hover:border-gray-500'
+            }, t.loadNew)
+          );
+        } else {
+          setActionSlot(null);
+        }
+        return () => setActionSlot(null);
+      }, [videoLoaded, t.loadNew, setActionSlot]);
+
       // Keyboard shortcuts — reads from refs, never stale
       useEffect(() => {
         const handleKey = (e) => {
@@ -450,82 +470,72 @@
       }, [goToFrame, saveCurrent, extractFirstLast]);
 
       return (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {!videoLoaded && <DropZone onFiles={loadVideo} />}
 
           {/* Video Player — always mounted, hidden until loaded */}
-          <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-6 space-y-6 ${videoLoaded ? '' : 'hidden'}`}>
-            <div className="max-w-3xl mx-auto rounded-xl overflow-hidden bg-black">
+          <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-4 space-y-3 ${videoLoaded ? '' : 'hidden'}`}>
+            <div className="rounded-xl overflow-hidden bg-black">
               <video ref={videoRef} className="w-full block" preload="metadata" />
             </div>
 
                 {/* Scrubber */}
                 <div>
-                  <div className="flex justify-between text-sm text-gray-400 mb-3">
+                  <div className="flex justify-between text-xs text-gray-400 mb-2">
                     <span>{t.frame}: <strong className="text-white">{currentFrame}</strong></span>
                     <span>{t.time}: <strong className="text-white">{formatTimePrecise(currentFrame / fps)}</strong></span>
                   </div>
                   <input type="range" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value))} />
                 </div>
 
-                {/* Info Row */}
-                <div className="flex justify-center gap-4 flex-wrap">
-                  <InfoPill label={t.duration} value={duration} />
-                  <InfoPill label={t.resolution} value={resolution} />
-                  <InfoPill label={t.estFrames} value={framesCount} />
-                </div>
-
-                {/* Navigation Buttons */}
-                <div className="flex justify-center gap-3 flex-wrap">
-                  <button onClick={() => goToFrame(0)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">|&#9664; {t.first}</button>
-                  <button onClick={() => goToFrame(currentFrame - 1)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">&#9664; {t.prev}</button>
-                  <button onClick={() => goToFrame(currentFrame + 1)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.next} &#9654;</button>
-                  <button onClick={() => goToFrame(totalFrames - 1)} className="px-5 py-2.5 border border-gray-700 rounded-full text-sm text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.last} &#9654;|</button>
-                </div>
-
-                {/* Go to frame */}
-                <div className="flex justify-center items-center gap-3">
-                  <label className="text-sm text-gray-400">{t.goToFrame}:</label>
-                  <input type="number" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value) || 0)}
-                    className="w-24 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500 transition-colors" />
-                </div>
               </div>
 
-            {/* Preview & Export */}
-            <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-6 space-y-6 ${videoLoaded ? '' : 'hidden'}`}>
-              <p className="text-sm font-semibold gradient-text uppercase tracking-wider">{t.framePreview}</p>
-              <div className="text-center">
-                <canvas ref={previewRef} className="max-w-full rounded-xl shadow-2xl shadow-black/30 mx-auto" />
-                <canvas ref={exportRef} className="hidden-canvas" />
-              </div>
+          {/* Two cards side by side below the video */}
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 ${videoLoaded ? '' : 'hidden'}`}>
 
-              {/* Filename */}
-              <div className="flex justify-center items-center gap-3 flex-wrap">
+            {/* Left card: Video Info & Navigation */}
+            <div className="bg-white/[0.03] border border-gray-800 rounded-2xl p-5 space-y-4">
+              <div className="grid grid-cols-3 gap-3">
+                <InfoPill label={t.duration} value={duration} />
+                <InfoPill label={t.resolution} value={resolution} />
+                <InfoPill label={t.estFrames} value={framesCount} />
+              </div>
+              <div className="flex justify-center gap-2 flex-wrap">
+                <button onClick={() => goToFrame(0)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">|&#9664; {t.first}</button>
+                <button onClick={() => goToFrame(currentFrame - 1)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">&#9664; {t.prev}</button>
+                <button onClick={() => goToFrame(currentFrame + 1)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.next} &#9654;</button>
+                <button onClick={() => goToFrame(totalFrames - 1)} className="px-3.5 py-1.5 border border-gray-700 rounded-full text-xs text-gray-300 hover:border-gray-500 hover:text-white transition-colors">{t.last} &#9654;|</button>
+              </div>
+              <div className="flex justify-center items-center gap-3">
+                <label className="text-sm text-gray-400">{t.goToFrame}:</label>
+                <input type="number" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value) || 0)}
+                  className="w-24 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500 transition-colors" />
+              </div>
+            </div>
+
+            {/* Right card: Export Controls */}
+            <div className="bg-white/[0.03] border border-gray-800 rounded-2xl p-5 space-y-4">
+              <canvas ref={exportRef} className="hidden-canvas" />
+              <div className="flex items-center gap-3 flex-wrap">
                 <label className="text-sm text-gray-400">{t.filename}:</label>
                 <input type="text" value={filename} onChange={(e) => { setFilename(e.target.value); filenameRef.current = e.target.value; }}
-                  className="px-4 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 transition-colors w-64" />
+                  className="flex-1 min-w-0 px-4 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" />
                 <span className="text-gray-500 text-sm">.png</span>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-center gap-3 flex-wrap">
-                <button onClick={saveCurrent} disabled={isExtracting} className="px-6 py-3 bg-gradient text-white font-semibold rounded-full hover-lift shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed">{t.saveCurrent}</button>
-                <button onClick={extractFirstLast} disabled={isExtracting} className="px-6 py-3 bg-white text-black font-semibold rounded-full hover-lift disabled:opacity-50 disabled:cursor-not-allowed">{t.firstAndLast}</button>
+              <div className="flex gap-3 flex-wrap">
+                <button onClick={saveCurrent} disabled={isExtracting} className="flex-1 px-4 py-2.5 bg-gradient text-white font-semibold rounded-full hover-lift shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed text-xs">{t.saveCurrent}</button>
+                <button onClick={extractFirstLast} disabled={isExtracting} className="flex-1 px-4 py-2.5 bg-white text-black font-semibold rounded-full hover-lift disabled:opacity-50 disabled:cursor-not-allowed text-xs">{t.firstAndLast}</button>
               </div>
-
-              {/* Batch Toggle */}
               <div className="flex justify-center items-center gap-3">
                 <span className="text-sm text-gray-400">{t.batchMode}</span>
                 <button onClick={() => setShowBatch(!showBatch)} className={`w-12 h-6 rounded-full transition-all relative ${showBatch ? 'bg-gradient' : 'bg-gray-700'}`}>
                   <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform shadow ${showBatch ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
               </div>
-
-              {/* Batch Section */}
               {showBatch && (
-                <div className="bg-white/[0.03] border border-gray-800 rounded-xl p-6 space-y-4">
-                  <p className="text-sm font-medium text-gray-300 text-center">{t.batchExport}</p>
-                  <div className="flex justify-center items-center gap-3 flex-wrap">
+                <div className="bg-white/[0.03] border border-gray-800 rounded-xl p-5 space-y-4">
+                  <p className="text-sm font-medium text-gray-300">{t.batchExport}</p>
+                  <div className="flex items-center gap-3 flex-wrap">
                     <label className="text-sm text-gray-400">{t.extractEvery}</label>
                     <input type="number" value={batchInterval} min="1" onChange={(e) => setBatchInterval(parseInt(e.target.value) || 1)}
                       className="w-20 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500" />
@@ -535,7 +545,7 @@
                       <option value="seconds" className="bg-black">{t.seconds}</option>
                     </select>
                   </div>
-                  <div className="flex justify-center items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <label className="text-sm text-gray-400">{t.fromFrame}</label>
                     <input type="number" value={batchStart} min="0" onChange={(e) => setBatchStart(parseInt(e.target.value) || 0)}
                       className="w-20 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500" />
@@ -543,27 +553,32 @@
                     <input type="number" value={batchEnd} min="0" onChange={(e) => setBatchEnd(parseInt(e.target.value) || 0)}
                       className="w-20 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500" />
                   </div>
-                  <div className="text-center">
-                    <button onClick={runBatch} disabled={isExtracting} className="px-6 py-3 border border-gray-600 text-white font-semibold rounded-full hover:border-white transition-colors disabled:opacity-50">{t.extractBatch}</button>
-                  </div>
+                  <button onClick={runBatch} disabled={isExtracting} className="w-full px-5 py-3 border border-gray-600 text-white font-semibold rounded-full hover:border-white transition-colors disabled:opacity-50 text-sm">{t.extractBatch}</button>
                   {progress && (
                     <div className="space-y-2">
                       <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
                         <div className="h-full bg-gradient transition-all rounded-full" style={{ width: `${(progress.current / progress.total) * 100}%` }} />
                       </div>
-                      <p className="text-xs text-gray-400 text-center">
+                      <p className="text-xs text-gray-400">
                         {progress.done ? `${t.done}! ${progress.total} ${t.frames} ${t.extracted}.` : `${t.extracting} ${progress.current} ${t.of} ${progress.total}...`}
                       </p>
                     </div>
                   )}
                 </div>
               )}
-
-              {/* Load New */}
-              <div className="text-center pt-4">
-                <button onClick={resetVideo} className="text-sm text-gray-500 hover:text-white transition-colors">{t.loadNew}</button>
-              </div>
             </div>
+
+          </div>
+
+          {/* Keyboard Shortcuts — same row as the cards */}
+          <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-5 ${videoLoaded ? '' : 'hidden'}`}>
+            <p className="text-xs font-semibold gradient-text uppercase tracking-wider mb-3">{t.keyboardShortcuts}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              {[t.shortcutArrows, t.shortcutHomeEnd, t.shortcutS, t.shortcutB].map((s, i) => (
+                <p key={i} className="text-xs text-gray-500">{s}</p>
+              ))}
+            </div>
+          </div>
         </div>
       );
     };
@@ -705,24 +720,15 @@
     const FooterSection = () => {
       const { t } = useLang();
       return (
-        <footer className="mt-16 pb-12 px-6">
+        <footer className="mt-8 pb-8 px-6">
           <div className="max-w-5xl mx-auto">
-            {/* Keyboard shortcuts */}
-            <div className="bg-white/[0.03] border border-gray-800 rounded-2xl p-6 mb-8">
-              <p className="text-sm font-semibold gradient-text uppercase tracking-wider mb-4">{t.keyboardShortcuts}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {[t.shortcutArrows, t.shortcutHomeEnd, t.shortcutS, t.shortcutB].map((s, i) => (
-                  <p key={i} className="text-sm text-gray-500">{s}</p>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-800">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-6 border-t border-gray-800">
               <div className="flex items-center gap-3">
-                <span className="text-lg font-bold gradient-text">{t.brand}</span>
+                <span className="text-sm font-bold gradient-text">{t.brand}</span>
                 <span className="text-xs text-gray-600">|</span>
                 <Logo />
               </div>
-              <p className="text-xs text-gray-500">{t.byLine}</p>
+              <p className="text-[11px] text-gray-500">{t.byLine}</p>
             </div>
           </div>
         </footer>
@@ -733,6 +739,7 @@
     function App() {
       const [lang, setLang] = useState('en');
       const [mode, setMode] = useState('single');
+      const [actionSlot, setActionSlot] = useState(null);
       const t = translations[lang];
 
       return (
@@ -741,8 +748,8 @@
             <Header />
             <main className="px-6 pb-8">
               <div className="max-w-5xl mx-auto">
-                <ModeTabs mode={mode} setMode={setMode} />
-                {mode === 'single' ? <SingleMode /> : <BulkMode />}
+                <ModeTabs mode={mode} setMode={setMode} rightSlot={mode === 'single' ? actionSlot : null} />
+                {mode === 'single' ? <SingleMode setActionSlot={setActionSlot} /> : <BulkMode />}
               </div>
             </main>
             <FooterSection />

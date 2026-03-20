@@ -466,6 +466,10 @@
             renderFileList();
         }
 
+        function escapeHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
         function renderFileList() {
             if (bulkFiles.length === 0) {
                 fileList.style.display = 'none';
@@ -477,7 +481,7 @@
             fileCount.textContent = bulkFiles.length;
             fileListItems.innerHTML = bulkFiles.map((f, i) => `
                 <div class="file-item" data-index="${i}">
-                    <span class="file-item-name">${f.name}</span>
+                    <span class="file-item-name">${escapeHtml(f.name)}</span>
                     <span class="file-item-status" id="status-${i}">Pending</span>
                     <button class="file-item-remove" onclick="removeBulkFile(${i})">x</button>
                 </div>
