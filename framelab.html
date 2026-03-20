@@ -4,10 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>framelab — by experimenting.ai</title>
+  <!-- Tailwind CDN generates output dynamically; SRI not supported for this endpoint -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"
+    integrity="sha384-MhvFknC0AhqKZXwSCyPeIirpE1IhTafmLXTvTCai5pxjAqFcqEAAqKH/2lXrFVPn"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    integrity="sha384-VQePqH/QE94Buf4g/4MI5NrqDYjdqT7JW6KzhieQUlw6w7U7VD59fPqCAunpXEu6"
+    crossorigin="anonymous"></script>
+  <!-- TODO: Remove Babel Standalone in production builds; compile JSX ahead-of-time instead -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"
+    integrity="sha384-RtnJVik7wuedvaD33OAmqud3NpHYg9cC7fusyNSj4XOXRJnBWGONH1Q5bJ4xuJXZ"
+    crossorigin="anonymous"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&display=swap');
     * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
@@ -288,7 +296,7 @@
       const [batchEnd, setBatchEnd] = useState(0);
       const [progress, setProgress] = useState(null);
       const [isExtracting, setIsExtracting] = useState(false);
-      const fps = 30;
+      const [fps, setFps] = useState(30);
 
       // Mutable refs — keyboard handlers & async funcs always read current values
       const currentFrameRef = useRef(0);
@@ -296,6 +304,8 @@
       const isExtractingRef = useRef(false);
       const filenameRef = useRef('frame');
       const videoLoadedRef = useRef(false);
+      const fpsRef = useRef(30);
+      const videoDurationRef = useRef(0);
 
       const formatTime = (s) => `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
       const formatTimePrecise = (s) => `${Math.floor(s/60)}:${(s%60).toFixed(3).padStart(6,'0')}`;
@@ -306,6 +316,18 @@
       useEffect(() => { isExtractingRef.current = isExtracting; }, [isExtracting]);
       useEffect(() => { filenameRef.current = filename; }, [filename]);
       useEffect(() => { videoLoadedRef.current = videoLoaded; }, [videoLoaded]);
+      useEffect(() => { fpsRef.current = fps; }, [fps]);
+
+      // Recalculate total frames when FPS changes (if a video is loaded)
+      useEffect(() => {
+        if (videoDurationRef.current > 0) {
+          const newTotal = Math.floor(videoDurationRef.current * fps);
+          setTotalFrames(newTotal);
+          totalFramesRef.current = newTotal;
+          setFramesCount(`~${newTotal}`);
+          setBatchEnd(newTotal - 1);
+        }
+      }, [fps]);
 
       const loadVideo = (files) => {
         const file = files[0];
@@ -321,7 +343,8 @@
         if (!videoSrc || !v) return;
         v.src = videoSrc;
         const onMeta = () => {
-          const total = Math.floor(v.duration * fps);
+          videoDurationRef.current = v.duration;
+          const total = Math.floor(v.duration * fpsRef.current);
           setTotalFrames(total);
           totalFramesRef.current = total;
           setDuration(formatTime(v.duration));
@@ -366,7 +389,7 @@
         frameNum = Math.max(0, Math.min(frameNum, max));
         setCurrentFrame(frameNum);
         currentFrameRef.current = frameNum;
-        if (v) v.currentTime = frameNum / fps;
+        if (v) v.currentTime = frameNum / fpsRef.current;
       }, []);
 
       // captureFrameAt — uses one-shot addEventListener (no onseeked conflict)
@@ -380,7 +403,7 @@
             resolve(c.toDataURL('image/png'));
           };
           v.addEventListener('seeked', handler, { once: true });
-          v.currentTime = frameNum / fps;
+          v.currentTime = frameNum / fpsRef.current;
         });
       }, []);
 
@@ -511,6 +534,16 @@
                 <input type="number" min="0" max={totalFrames - 1} value={currentFrame} onChange={(e) => goToFrame(parseInt(e.target.value) || 0)}
                   className="w-24 px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-center text-sm focus:outline-none focus:border-purple-500 transition-colors" />
               </div>
+              <div className="flex justify-center items-center gap-3">
+                <label className="text-sm text-gray-400">FPS:</label>
+                <select value={fps} onChange={(e) => setFps(Number(e.target.value))}
+                  className="px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 appearance-none">
+                  <option value={24} className="bg-black">24</option>
+                  <option value={25} className="bg-black">25</option>
+                  <option value={30} className="bg-black">30</option>
+                  <option value={60} className="bg-black">60</option>
+                </select>
+              </div>
             </div>
 
             {/* Right card: Export Controls */}
@@ -592,6 +625,7 @@
       const [statuses, setStatuses] = useState({});
       const [progress, setProgress] = useState(null);
       const [isProcessing, setIsProcessing] = useState(false);
+      const [fps, setFps] = useState(30);
 
       const addFiles = (newFiles) => {
         setFiles(prev => {
@@ -625,7 +659,6 @@
             const results = await new Promise((resolve, reject) => {
               bulkVideo.src = URL.createObjectURL(file);
               bulkVideo.onloadedmetadata = async () => {
-                const fps = 30;
                 const total = Math.floor(bulkVideo.duration * fps);
                 const baseName = file.name.replace(/\.[^/.]+$/, '');
                 const res = [];
@@ -695,6 +728,16 @@
                     {t.lastFrame} &#9654;|
                   </button>
                 </div>
+                <div className="flex justify-center items-center gap-3">
+                  <label className="text-sm text-gray-400">FPS:</label>
+                  <select value={fps} onChange={(e) => setFps(Number(e.target.value))}
+                    className="px-3 py-2 bg-white/5 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 appearance-none">
+                    <option value={24} className="bg-black">24</option>
+                    <option value={25} className="bg-black">25</option>
+                    <option value={30} className="bg-black">30</option>
+                    <option value={60} className="bg-black">60</option>
+                  </select>
+                </div>
                 <div className="flex justify-center gap-3">
                   <button onClick={processAll} disabled={isProcessing} className="px-6 py-3 bg-white text-black font-semibold rounded-full hover-lift disabled:opacity-50">{t.processAll}</button>
                   <button onClick={clearAll} disabled={isProcessing} className="px-6 py-3 border border-gray-700 text-gray-300 font-medium rounded-full hover:border-gray-500 transition-colors disabled:opacity-50">{t.clearAll}</button>
@@ -728,7 +771,9 @@
                 <span className="text-xs text-gray-600">|</span>
                 <Logo />
               </div>
-              <p className="text-[11px] text-gray-500">{t.byLine}</p>
+              <p className="text-[11px] text-gray-500">
+                by <a href="https://experimenting.ai" target="_blank" rel="noopener noreferrer" style={{ color: '#8000FF' }}>experimenting.ai</a>
+              </p>
             </div>
           </div>
         </footer>
