@@ -82,6 +82,7 @@
         of: 'of',
         done: 'Done',
         loadNew: 'Load New Video',
+        loadNewVideos: 'Load New Videos',
         videosToProcess: 'Videos to Process',
         extractOptions: 'Extract Options',
         firstFrame: 'First Frame',
@@ -146,6 +147,7 @@
         of: 'de',
         done: 'Terminé',
         loadNew: 'Charger une nouvelle vidéo',
+        loadNewVideos: 'Charger de nouvelles vidéos',
         videosToProcess: 'Vidéos à traiter',
         extractOptions: 'Options d\'extraction',
         firstFrame: 'Première image',
@@ -612,7 +614,7 @@
     };
 
     // ─── Bulk Mode ───
-    const BulkMode = () => {
+    const BulkMode = ({ setActionSlot }) => {
       const { t } = useLang();
       const [files, setFiles] = useState([]);
       const [extractFirst, setExtractFirst] = useState(true);
@@ -621,6 +623,23 @@
       const [progress, setProgress] = useState(null);
       const [isProcessing, setIsProcessing] = useState(false);
       const [fps, setFps] = useState(30);
+
+      // Show "Load New Videos" button when files are loaded
+      const clearAllRef = useRef(null);
+      clearAllRef.current = () => { setFiles([]); setStatuses({}); setProgress(null); };
+      useEffect(() => {
+        if (files.length > 0) {
+          setActionSlot(
+            React.createElement('button', {
+              onClick: () => clearAllRef.current?.(),
+              className: 'text-sm text-gray-400 hover:text-white transition-colors border border-gray-700 rounded-full px-5 py-2 hover:border-gray-500'
+            }, t.loadNewVideos)
+          );
+        } else {
+          setActionSlot(null);
+        }
+        return () => setActionSlot(null);
+      }, [files.length, t.loadNewVideos, setActionSlot]);
 
       const addFiles = (newFiles) => {
         setFiles(prev => {
@@ -651,28 +670,45 @@
           setProgress({ current: i + 1, total: files.length, filename: file.name });
 
           try {
+            // Reset video element completely between files
+            bulkVideo.removeAttribute('src');
+            bulkVideo.load();
+            await new Promise(r => setTimeout(r, 100));
+
+            const objectUrl = URL.createObjectURL(file);
             const results = await new Promise((resolve, reject) => {
-              bulkVideo.src = URL.createObjectURL(file);
-              bulkVideo.onloadeddata = async () => {
-                const total = Math.floor(bulkVideo.duration * fps);
-                const baseName = file.name.replace(/\.[^/.]+$/, '');
-                const res = [];
-                const captureAt = (frameNum) => new Promise(r => {
-                  bulkVideo.currentTime = Math.max(0.001, frameNum / fps);
-                  bulkVideo.onseeked = () => {
-                    const c = document.createElement('canvas');
-                    c.width = bulkVideo.videoWidth; c.height = bulkVideo.videoHeight;
-                    c.getContext('2d').drawImage(bulkVideo, 0, 0);
-                    r(c.toDataURL('image/png'));
-                  };
-                });
-                if (extractFirst) res.push({ data: await captureAt(0), filename: `${baseName}_first.png` });
-                if (extractLast) res.push({ data: await captureAt(total - 1), filename: `${baseName}_last.png` });
-                URL.revokeObjectURL(bulkVideo.src);
-                resolve(res);
+              const onError = (e) => { cleanup(); reject(e); };
+              const cleanup = () => {
+                bulkVideo.removeEventListener('loadeddata', onLoaded);
+                bulkVideo.removeEventListener('error', onError);
               };
-              bulkVideo.onerror = reject;
+              const onLoaded = async () => {
+                cleanup();
+                try {
+                  const total = Math.floor(bulkVideo.duration * fps);
+                  const baseName = file.name.replace(/\.[^/.]+$/, '');
+                  const res = [];
+                  const captureAt = (frameNum) => new Promise(r => {
+                    const seekHandler = () => {
+                      bulkVideo.removeEventListener('seeked', seekHandler);
+                      const c = document.createElement('canvas');
+                      c.width = bulkVideo.videoWidth; c.height = bulkVideo.videoHeight;
+                      c.getContext('2d').drawImage(bulkVideo, 0, 0);
+                      r(c.toDataURL('image/png'));
+                    };
+                    bulkVideo.addEventListener('seeked', seekHandler);
+                    bulkVideo.currentTime = Math.max(0.001, frameNum / fps);
+                  });
+                  if (extractFirst) res.push({ data: await captureAt(0), filename: `${baseName}_first.png` });
+                  if (extractLast) res.push({ data: await captureAt(total - 1), filename: `${baseName}_last.png` });
+                  resolve(res);
+                } catch (err) { reject(err); }
+              };
+              bulkVideo.addEventListener('loadeddata', onLoaded);
+              bulkVideo.addEventListener('error', onError);
+              bulkVideo.src = objectUrl;
             });
+            URL.revokeObjectURL(objectUrl);
             for (const { data, filename } of results) {
               download(data, filename);
               await new Promise(r => setTimeout(r, 150));
@@ -788,8 +824,8 @@
             <Header />
             <main className="px-6 pb-8">
               <div className="max-w-5xl mx-auto">
-                <ModeTabs mode={mode} setMode={setMode} rightSlot={mode === 'single' ? actionSlot : null} />
-                {mode === 'single' ? <SingleMode setActionSlot={setActionSlot} /> : <BulkMode />}
+                <ModeTabs mode={mode} setMode={setMode} rightSlot={actionSlot} />
+                {mode === 'single' ? <SingleMode setActionSlot={setActionSlot} /> : <BulkMode setActionSlot={setActionSlot} />}
               </div>
             </main>
             <FooterSection />
