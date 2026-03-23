@@ -346,10 +346,12 @@
           setBatchEnd(total - 1);
           setVideoLoaded(true);
           videoLoadedRef.current = true;
-          // Seek to frame 0
           setCurrentFrame(0);
           currentFrameRef.current = 0;
-          v.currentTime = 0;
+          // Capture first frame once video data is ready
+          const tryCapture = () => capturePreview();
+          v.addEventListener('seeked', tryCapture, { once: true });
+          v.currentTime = 0.001; // avoid no-op seek when already at 0
         };
         v.addEventListener('loadedmetadata', onMeta, { once: true });
         return () => v.removeEventListener('loadedmetadata', onMeta);
@@ -492,7 +494,7 @@
           {/* Video Player — always mounted, hidden until loaded */}
           <div className={`bg-white/[0.03] border border-gray-800 rounded-2xl p-4 space-y-3 ${videoLoaded ? '' : 'hidden'}`}>
             <div className="rounded-xl overflow-hidden bg-black">
-              <video ref={videoRef} className="w-full block" preload="metadata" />
+              <video ref={videoRef} className="w-full block" preload="auto" />
             </div>
 
                 {/* Scrubber */}
