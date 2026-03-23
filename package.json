@@ -1,0 +1,19 @@
+{
+  "name": "movie-frame-extractor",
+  "version": "1.0.0",
+  "description": "Browser-based tool to extract frames from video files and save them as PNG images",
+  "author": "experimenting.ai",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/experimenting-ai/movie-frame-extractor.git"
+  },
+  "keywords": [
+    "video",
+    "frame",
+    "extractor",
+    "framelab",
+    "png",
+    "screenshot"
+  ]
+}
