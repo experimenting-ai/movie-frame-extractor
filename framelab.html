@@ -31,7 +31,7 @@
 </head>
 <body class="antialiased text-white min-h-screen" style="background-color: #121212;">
   <div id="root"></div>
-  <video id="bulkVideoPlayer" style="display: none;" preload="metadata"></video>
+  <video id="bulkVideoPlayer" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" preload="auto"></video>
 
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
@@ -653,12 +653,12 @@
           try {
             const results = await new Promise((resolve, reject) => {
               bulkVideo.src = URL.createObjectURL(file);
-              bulkVideo.onloadedmetadata = async () => {
+              bulkVideo.onloadeddata = async () => {
                 const total = Math.floor(bulkVideo.duration * fps);
                 const baseName = file.name.replace(/\.[^/.]+$/, '');
                 const res = [];
                 const captureAt = (frameNum) => new Promise(r => {
-                  bulkVideo.currentTime = frameNum / fps;
+                  bulkVideo.currentTime = Math.max(0.001, frameNum / fps);
                   bulkVideo.onseeked = () => {
                     const c = document.createElement('canvas');
                     c.width = bulkVideo.videoWidth; c.height = bulkVideo.videoHeight;
