@@ -112,7 +112,8 @@
         shortcutB: 'B to extract first & last',
         poweredBy: 'Built with',
         byLine: 'An experimenting.ai tool',
-        backToSite: 'experimenting.ai Tools'
+        backToSite: 'experimenting.ai Tools',
+        backShort: 'Tools'
       },
       fr: {
         brand: 'framelab',
@@ -178,7 +179,8 @@
         shortcutB: 'B pour extraire première & dernière',
         poweredBy: 'Construit avec',
         byLine: 'Un outil experimenting.ai',
-        backToSite: 'Outils experimenting.ai'
+        backToSite: 'Outils experimenting.ai',
+        backShort: 'Outils'
       }
     };
 
@@ -214,16 +216,17 @@
                 <Logo />
               </a>
               <div className="flex items-center gap-3">
-                <a href="https://www.experimenting.ai/#tools" className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity px-3 py-1 border border-gray-700 rounded-full hover:border-gray-500 flex items-center gap-1.5">
+                <a href="https://www.experimenting.ai/#tools" className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity px-3 py-1 border border-gray-700 rounded-full hover:border-gray-500 flex items-center gap-1.5 whitespace-nowrap">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                  {t.backToSite}
+                  <span className="sm:hidden">{t.backShort}</span>
+                  <span className="hidden sm:inline">{t.backToSite}</span>
                 </a>
                 <LangSwitch />
               </div>
             </div>
-            <div className="flex items-baseline gap-4 mb-2">
+            <div className="flex flex-wrap items-baseline gap-4 mb-2">
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight gradient-text">{t.brand}</h1>
-              <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest border border-gray-700 px-3 py-1 rounded-full">{t.tagline}</span>
+              <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest border border-gray-700 px-3 py-1 rounded-full whitespace-nowrap">{t.tagline}</span>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-white mt-4 mb-3 leading-tight max-w-3xl">{t.title}</p>
             <p className="text-lg text-gray-400 max-w-2xl leading-relaxed">{t.subtitle}<br />{t.subtitle2}<br />{t.subtitle3}<br />{t.subtitle4}</p>
