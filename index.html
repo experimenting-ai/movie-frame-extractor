@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>framelab — by experimenting.ai</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- ⚠️ CDN dependencies are PINNED to exact versions ON PURPOSE. Do NOT drop the version numbers.
        An UNPINNED @babel/standalone auto-upgraded to a breaking v8 and blanked this page
        (React never mounted → black screen). If you bump any version, recompute its SRI hash:
@@ -207,7 +210,9 @@
         <header className="pt-8 pb-6 px-6">
           <div className="max-w-5xl mx-auto">
             <div className="flex items-center justify-between mb-6">
-              <Logo />
+              <a href="https://www.experimenting.ai" aria-label="experimenting.ai" className="hover-lift">
+                <Logo />
+              </a>
               <div className="flex items-center gap-3">
                 <a href="https://www.experimenting.ai/#tools" className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity px-3 py-1 border border-gray-700 rounded-full hover:border-gray-500 flex items-center gap-1.5">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -812,7 +817,9 @@
               <div className="flex items-center gap-3">
                 <span className="text-sm font-bold gradient-text">{t.brand}</span>
                 <span className="text-xs text-gray-600">|</span>
-                <Logo />
+                <a href="https://www.experimenting.ai" aria-label="experimenting.ai" className="hover-lift">
+                  <Logo />
+                </a>
               </div>
               <p className="text-[11px] text-gray-500">
                 by <a href="https://www.experimenting.ai" target="_blank" rel="noopener noreferrer" style={{ color: '#8000FF' }}>experimenting.ai</a>
